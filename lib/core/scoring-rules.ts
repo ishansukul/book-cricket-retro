@@ -1,0 +1,1 @@
+export function parsePageDigit(page: number): number { return page % 2 === 0 ? (page % 10 === 0 ? 0 : page % 10 > 6 ? 1 : page % 10) : 0; }
