@@ -1,0 +1,1 @@
+export const NCERT_MATH_10 = { code: '1062', title: 'Mathematics Class X', totalPages: 360 };
