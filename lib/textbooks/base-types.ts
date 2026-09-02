@@ -1,0 +1,1 @@
+export interface Textbook { title: string; code: string; totalPages: number; }
