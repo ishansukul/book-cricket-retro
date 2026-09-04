@@ -1,0 +1,1 @@
+export const TOPPER = { name: 'Aditya (Rank 1)', perk: 'Never gets out on 0', outReduction: 0.4 };
