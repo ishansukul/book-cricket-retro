@@ -1,0 +1,1 @@
+export interface PlayerTrait { stealth: number; power: number; consistency: number; }
