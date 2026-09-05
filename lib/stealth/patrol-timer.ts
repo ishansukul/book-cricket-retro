@@ -1,0 +1,1 @@
+export const PATROL_INTERVAL_SEC = 45;
