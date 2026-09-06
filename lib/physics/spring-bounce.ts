@@ -1,0 +1,1 @@
+export const SPRING_TENSION = 170; export const SPRING_FRICTION = 26;
