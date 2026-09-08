@@ -1,0 +1,1 @@
+export interface QuickMatch { totalOvers: 5; ballsRemaining: 30; }
