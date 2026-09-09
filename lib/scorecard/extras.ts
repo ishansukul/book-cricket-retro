@@ -1,0 +1,1 @@
+export function calculateTotalRuns(batsmanRuns: number, extras: number) { return batsmanRuns + extras; }
