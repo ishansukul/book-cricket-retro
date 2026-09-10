@@ -1,0 +1,1 @@
+export const NCERT_SCIENCE_10 = { code: '1064', title: 'Science Class X', totalPages: 298 };
