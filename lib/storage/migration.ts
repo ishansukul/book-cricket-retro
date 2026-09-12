@@ -1,0 +1,1 @@
+export function migrateV1() { return true; }
