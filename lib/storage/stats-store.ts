@@ -1,0 +1,1 @@
+export function saveStats(k: string, v: any) { if (typeof localStorage !== 'undefined') localStorage.setItem(k, JSON.stringify(v)); }
