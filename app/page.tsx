@@ -1,217 +1,242 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Trophy, RefreshCw, Volume2, VolumeX, Sparkles, ChevronRight } from "lucide-react";
+import { Trophy, RefreshCw, Volume2, Sparkles, BookOpen, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-interface BookData {
+interface OfficialNcertBook {
     id: string;
+    code: string;
     title: string;
+    hindiTitle: string;
     subTitle: string;
-    classLabel: string;
     subject: string;
-    coverBg: string;
-    coverAccent: string;
+    coverColor: string; // Tailwind gradient / color
+    accentBorder: string;
+    symbolEmoji: string;
     totalPages: number;
     samplePages: Array<{
-        chapter: string;
-        heading: string;
-        bodyText: string[];
-        diagram?: string;
-        doodle: string;
+        chapterNum: string;
+        chapterHindi: string;
+        chapterEnglish: string;
+        sectionTitle: string;
+        contentParagraphs: string[];
+        formulaBox?: string;
+        roughDoodle: string;
     }>;
 }
 
-const BOOKS: BookData[] = [
+const OFFICIAL_BOOKS: OfficialNcertBook[] = [
     {
-        id: "ncert-math-10",
+        id: "ncert-maths-10",
+        code: "1062",
         title: "MATHEMATICS",
+        hindiTitle: "गणित",
         subTitle: "Textbook for Class X",
-        classLabel: "Class 10",
-        subject: "NCERT",
-        coverBg: "bg-[#7A3E1D]", // classic worn brown NCERT
-        coverAccent: "border-[#4D240E]",
+        subject: "Central Board of Secondary Education (CBSE)",
+        coverColor: "from-[#8B3A1C] via-[#6B280E] to-[#4A1806]", // Official Class 10 Math Brown/Rust
+        accentBorder: "border-[#A04522]",
+        symbolEmoji: "📐",
         totalPages: 348,
         samplePages: [
             {
-                chapter: "CHAPTER 4 • QUADRATIC EQUATIONS",
-                heading: "4.3 Solution of a Quadratic Equation by Factorisation",
-                bodyText: [
-                    "Consider the quadratic equation 2x² – 5x + 3 = 0. Let us factorise the middle term.",
-                    "2x² – 2x – 3x + 3 = 0  =>  2x(x – 1) – 3(x – 1) = 0",
-                    "Therefore, (2x – 3)(x – 1) = 0. The roots are x = 3/2 and x = 1.",
-                    "Exercise 4.2: Find the dimensions of a prayer hall whose carpet area is 300m²."
+                chapterNum: "CHAPTER 4",
+                chapterHindi: "द्विघात समीकरण",
+                chapterEnglish: "QUADRATIC EQUATIONS",
+                sectionTitle: "4.3 Solution of a Quadratic Equation by Factorisation",
+                contentParagraphs: [
+                    "Let us consider the quadratic equation 2x² – 5x + 3 = 0.",
+                    "Splitting the middle term: 2x² – 2x – 3x + 3 = 0",
+                    "=> 2x(x – 1) – 3(x – 1) = 0 => (2x – 3)(x – 1) = 0",
+                    "Hence the roots are x = 3/2 and x = 1.",
+                    "Exercise 4.2: Find two consecutive positive integers, sum of whose squares is 365."
                 ],
-                diagram: "📐 △ABC ~ △PQR | Area = ½ × b × h",
-                doodle: "Pencil sketch: Rohit Sharma pull shot + 'KREO 2026'"
+                formulaBox: "Discriminant: D = b² - 4ac | Roots: x = (-b ± √D) / 2a",
+                roughDoodle: "Pencil: Rohit 264* + compass needle puncture in corner"
             },
             {
-                chapter: "CHAPTER 8 • INTRODUCTION TO TRIGONOMETRY",
-                heading: "8.2 Trigonometric Ratios",
-                bodyText: [
-                    "Let us take a right angled triangle ABC right angled at B.",
-                    "sin A = (Side opposite to angle A) / Hypotenuse = BC / AC",
-                    "cos A = (Side adjacent to angle A) / Hypotenuse = AB / AC",
-                    "Remember: sin²θ + cos²θ = 1. (Always verify before board exams!)"
+                chapterNum: "CHAPTER 8",
+                chapterHindi: "त्रिकोणमिति का परिचय",
+                chapterEnglish: "INTRODUCTION TO TRIGONOMETRY",
+                sectionTitle: "8.2 Trigonometric Ratios of Some Specific Angles",
+                contentParagraphs: [
+                    "In right triangle ABC right-angled at B:",
+                    "sin A = Opposite Side / Hypotenuse = BC / AC",
+                    "cos A = Adjacent Side / Hypotenuse = AB / AC",
+                    "tan A = sin A / cos A = BC / AB",
+                    "Theorem 8.1: In any △ABC, sin²θ + cos²θ = 1 for 0° ≤ θ ≤ 90°."
                 ],
-                diagram: "sin 0° = 0 | sin 30° = 1/2 | sin 45° = 1/√2 | sin 90° = 1",
-                doodle: "Compass hole poked through page with ink bleeding"
+                formulaBox: "sin 30° = 1/2 | sin 45° = 1/√2 | sin 60° = √3/2 | tan 45° = 1",
+                roughDoodle: "Blue ink FLAMES grid (F-L-A-M-E-S) with classmate names crossed out"
             },
             {
-                chapter: "CHAPTER 12 • AREAS RELATED TO CIRCLES",
-                heading: "12.2 Perimeter and Area of a Circle — A Review",
-                bodyText: [
-                    "The distance covered by traveling once around a circle is its perimeter.",
-                    "Circumference = 2πr = πd, where π ≈ 22/7 or 3.14159.",
-                    "The great Indian mathematician Aryabhata gave an approximate value for π as 62832/20000 = 3.1416.",
-                    "Example 3: Find the cost of fencing a circular field at ₹24 per metre."
+                chapterNum: "CHAPTER 12",
+                chapterHindi: "वृत्तों से संबंधित क्षेत्रफल",
+                chapterEnglish: "AREAS RELATED TO CIRCLES",
+                sectionTitle: "12.2 Area of Sector and Segment of a Circle",
+                contentParagraphs: [
+                    "The region bounded by two radii and the arc is called a sector.",
+                    "Area of sector of angle θ = (θ / 360°) × πr²",
+                    "Length of an arc of a sector of angle θ = (θ / 360°) × 2πr",
+                    "Where π is taken as 22/7 unless stated otherwise."
                 ],
-                diagram: "⭕ Sector Area = (θ / 360°) × πr²",
-                doodle: "Tick marks on questions: ✓Q1 ✓Q2 ✗Q5 (Pending HW)"
+                formulaBox: "Perimeter = 2πr | Area of Circle = πr² | Segment Area = Sector - Triangle",
+                roughDoodle: "Tic-Tac-Toe drawn with 0.5mm Natraj pencil"
             }
         ]
     },
     {
-        id: "classmate-rough",
-        title: "CLASSMATE",
-        subTitle: "6-Subject Spiral Bound Rough Notebook",
-        classLabel: "Rough Copy",
-        subject: "Blue Ruled Paper",
-        coverBg: "bg-[#1E3A8A]", // iconic blue classmate cover
-        coverAccent: "border-[#172554]",
-        totalPages: 240,
+        id: "ncert-science-10",
+        code: "1064",
+        title: "SCIENCE",
+        hindiTitle: "विज्ञान",
+        subTitle: "Textbook for Class X",
+        subject: "Central Board of Secondary Education (CBSE)",
+        coverColor: "from-[#1E3A8A] via-[#172554] to-[#0F172A]", // Official Science Deep Blue
+        accentBorder: "border-[#3B82F6]",
+        symbolEmoji: "🧬",
+        totalPages: 298,
         samplePages: [
             {
-                chapter: "PHYSICS & CHEMISTRY ROUGH WORK",
-                heading: "Ohm's Law & Circuit Diagram",
-                bodyText: [
-                    "V = I × R (Potential difference is directly proportional to current).",
-                    "Slope of V-I graph gives resistance R.",
-                    "Refractive index of glass with respect to air = 1.50.",
-                    "Speed of light in glass = 3 × 10⁸ / 1.5 = 2 × 10⁸ m/s."
+                chapterNum: "CHAPTER 1",
+                chapterHindi: "रासायनिक अभिक्रियाएं एवं समीकरण",
+                chapterEnglish: "CHEMICAL REACTIONS AND EQUATIONS",
+                sectionTitle: "1.2 Types of Chemical Reactions (Combustion & Displacement)",
+                contentParagraphs: [
+                    "When magnesium ribbon burns in air with a dazzling white flame, it changes into a white powder of Magnesium Oxide.",
+                    "2Mg (s) + O₂ (g) —> 2MgO (s)",
+                    "Displacement Reaction: Fe (s) + CuSO₄ (aq) —> FeSO₄ (aq) + Cu (s)",
+                    "The blue colour of copper sulphate solution fades and turns light green."
                 ],
-                diagram: "🔋 [ + | - ] ──/\/\/\──( A )──[ Key ]",
-                doodle: "Blue Reynolds ballpoint flames + 'DHONI FINISHES OFF IN STYLE'"
+                formulaBox: "Activity 1.3: Take zinc granules in a conical flask, add dil. HCl -> H₂ gas evolved with 'pop' sound.",
+                roughDoodle: "Sketch of Bunsen burner with huge flames + 'PERIOD 3 OVER!'"
             },
             {
-                chapter: "BACKBENCHER TIK-TAC-TOE VAULT",
-                heading: "Period 4 (Chemistry Lab Period Notes)",
-                bodyText: [
-                    "CuSO4 + Fe -> FeSO4 + Cu (Displacement Reaction).",
-                    "Blue copper sulphate solution turns light green.",
-                    "Brown coating deposited on iron nails.",
-                    "Note: Practical exam viva on Tuesday. Don't forget lab coat!"
+                chapterNum: "CHAPTER 10",
+                chapterHindi: "प्रकाश – परावर्तन तथा अपवर्तन",
+                chapterEnglish: "LIGHT – REFLECTION AND REFRACTION",
+                sectionTitle: "10.3 Refraction of Light & Snell's Law",
+                contentParagraphs: [
+                    "Light travels along a straight line in a transparent medium.",
+                    "When light travels from rarer to denser medium, it bends towards the normal.",
+                    "Snell's Law: The ratio of sine of angle of incidence to sine of angle of refraction is a constant.",
+                    "sin i / sin r = constant = n₂₁ (Refractive Index)"
                 ],
-                diagram: "❌ | ⭕ | ❌ \n──┼───┼──\n ⭕ | ❌ | ⭕ \n──┼───┼──\n ⭕ | ❌ | ❌  (Bunty Won!)",
-                doodle: "Caricature drawing of Chemistry teacher holding a test tube"
+                formulaBox: "Mirror Formula: 1/v + 1/u = 1/f | Lens Formula: 1/v - 1/u = 1/f",
+                roughDoodle: "Ray diagram sketch with sunglasses drawn on the focal point"
             }
         ]
     },
     {
-        id: "rd-sharma-10",
-        title: "MATHEMATICS (VOL. 1)",
-        subTitle: "By Dr. R.D. Sharma — Comprehensive Edition",
-        classLabel: "1200 Pages",
-        subject: "The Weapon",
-        coverBg: "bg-[#4A044E]", // heavy maroon/purple R.D. Sharma
-        coverAccent: "border-[#2A022D]",
-        totalPages: 1180,
+        id: "ncert-english-10",
+        code: "1059",
+        title: "FIRST FLIGHT",
+        hindiTitle: "प्रथम उड़ान",
+        subTitle: "Textbook in English for Class X",
+        subject: "Central Board of Secondary Education (CBSE)",
+        coverColor: "from-[#065F46] via-[#044E3B] to-[#022C22]", // Official English Forest Green
+        accentBorder: "border-[#10B981]",
+        symbolEmoji: "🕊️",
+        totalPages: 184,
         samplePages: [
             {
-                chapter: "CHAPTER 14 • REAL NUMBERS & POLYNOMIALS",
-                heading: "14.8 Euclid's Division Lemma (Advanced Problems)",
-                bodyText: [
-                    "Show that the square of any positive integer is of the form 3m or 3m + 1.",
-                    "Let a be any positive integer and b = 3. By division algorithm, a = 3q + r where 0 ≤ r < 3.",
-                    "Case I: a = 3q => a² = 9q² = 3(3q²) = 3m.",
-                    "Case II: a = 3q + 1 => a² = (3q + 1)² = 9q² + 6q + 1 = 3m + 1.",
-                    "Total 68 unsolved exercise problems follow."
+                chapterNum: "PROSE 1",
+                chapterHindi: "एक पत्र भगवान के नाम",
+                chapterEnglish: "A LETTER TO GOD",
+                sectionTitle: "By G.L. Fuentes — The Story of Lencho",
+                contentParagraphs: [
+                    "The house — the only one in the entire valley — sat on the crest of a low hill.",
+                    "Throughout the morning Lencho — who knew his fields intimately — had done nothing else but see the sky towards the north-east.",
+                    "'Now we're really going to get some water, woman.'",
+                    "The postmaster — a fat, amiable fellow — also broke out laughing, but almost immediately he turned serious: 'What faith! I wish I had the faith of the man who wrote this letter.'"
                 ],
-                diagram: "Q.E.D. (Hence Proved) ★★★★★ (Important for Boards)",
-                doodle: "Red ink double underline: 'DO NOT SKIP THIS QUESTION'"
+                formulaBox: "Moral: Unshakable faith in God and innocence of rural farmers.",
+                roughDoodle: "Reynolds 045 blue ink bird drawing flying off the margin"
             }
         ]
     }
 ];
 
-export default function AuthenticBookCricket() {
-    const [selectedBook, setSelectedBook] = useState<BookData>(BOOKS[0]);
-    const [bookState, setBookState] = useState<"CLOSED" | "OPEN_IDLE" | "RIFFLING">("CLOSED");
+export default function SuperAuthenticBookCricket() {
+    const [selectedBook, setSelectedBook] = useState<OfficialNcertBook>(OFFICIAL_BOOKS[0]);
+    const [bookState, setBookState] = useState<"CLOSED" | "OPEN" | "FLIPPING">("CLOSED");
     
-    // Page flipping state
+    // Page state
     const [displayedPage, setDisplayedPage] = useState<number>(142);
-    const [activeSampleIndex, setActiveSampleIndex] = useState<number>(0);
+    const [samplePageIndex, setSamplePageIndex] = useState<number>(0);
 
-    // Cricket Scorecard (Realistic hand-written tally)
+    // Scorecard state
     const [score, setScore] = useState(0);
     const [wickets, setWickets] = useState(0);
     const [balls, setBalls] = useState(0);
     const [highScore, setHighScore] = useState(0);
-    const [inningsOver, setInningsOver] = useState(false);
-    const [lastDelivery, setLastDelivery] = useState<{
+    const [matchEnded, setMatchEnded] = useState(false);
+    
+    const [lastAction, setLastAction] = useState<{
         page: number;
         runs: number | "OUT";
         commentary: string;
+        label: string;
         isBoundary: boolean;
     } | null>(null);
 
-    const [tallyHistory, setTallyHistory] = useState<Array<{
-        over: string;
+    const [ballLogs, setBallLogs] = useState<Array<{
+        ballNum: number;
         page: number;
         runs: number | "OUT";
-        runningTotal: number;
+        scoreAfter: number;
+        desc: string;
     }>>([]);
 
-    const riffleIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const flipTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const audioContextRef = useRef<AudioContext | null>(null);
 
-    // Audio SFX synthesis using Web Audio API (Zero external assets needed)
-    const audioCtxRef = useRef<AudioContext | null>(null);
-
-    const playSound = (type: "FLIP" | "FOUR" | "SIX" | "WICKET" | "SINGLE") => {
+    // Dynamic Sound Synthesis
+    const playNostalgiaSound = (type: "FLICK" | "FOUR" | "SIX" | "WICKET" | "SINGLE") => {
         try {
-            if (!audioCtxRef.current) {
-                audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+            if (!audioContextRef.current) {
+                audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
             }
-            const ctx = audioCtxRef.current;
+            const ctx = audioContextRef.current;
             if (ctx.state === "suspended") ctx.resume();
 
-            if (type === "FLIP") {
-                // Paper rustle white-noise click
-                const bufferSize = ctx.sampleRate * 0.04;
+            if (type === "FLICK") {
+                // Crisp paper flutter rustle
+                const bufferSize = ctx.sampleRate * 0.035;
                 const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
                 const data = buffer.getChannelData(0);
                 for (let i = 0; i < bufferSize; i++) {
-                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.25));
                 }
                 const noise = ctx.createBufferSource();
                 noise.buffer = buffer;
                 const filter = ctx.createBiquadFilter();
                 filter.type = "bandpass";
-                filter.frequency.value = 1800;
+                filter.frequency.value = 2200;
                 noise.connect(filter);
                 filter.connect(ctx.destination);
                 noise.start();
             } else if (type === "FOUR" || type === "SIX") {
-                // Wooden bat sweet-spot crack
+                // Wooden willow bat sweet spot punch
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 osc.type = "triangle";
-                osc.frequency.setValueAtTime(type === "SIX" ? 380 : 320, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.18);
-                gain.gain.setValueAtTime(0.35, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                osc.frequency.setValueAtTime(type === "SIX" ? 420 : 340, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(70, ctx.currentTime + 0.22);
+                gain.gain.setValueAtTime(0.4, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.22);
                 osc.connect(gain);
                 gain.connect(ctx.destination);
                 osc.start();
-                osc.stop(ctx.currentTime + 0.2);
+                osc.stop(ctx.currentTime + 0.22);
             } else if (type === "WICKET") {
-                // Stumps crash dissonance
+                // Shattered wooden stumps sound
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 osc.type = "sawtooth";
-                osc.frequency.setValueAtTime(160, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.3);
-                gain.gain.setValueAtTime(0.4, ctx.currentTime);
+                osc.frequency.setValueAtTime(180, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(35, ctx.currentTime + 0.35);
+                gain.gain.setValueAtTime(0.45, ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
                 osc.connect(gain);
                 gain.connect(ctx.destination);
@@ -223,86 +248,92 @@ export default function AuthenticBookCricket() {
 
     // Load High Score
     useEffect(() => {
-        const saved = localStorage.getItem("kreo_book_cricket_authentic_high");
+        const saved = localStorage.getItem("kreo_official_book_cricket_record");
         if (saved) setHighScore(parseInt(saved, 10));
     }, []);
 
-    // Page Riffle loop
+    // Flip Loop
     useEffect(() => {
-        if (bookState === "RIFFLING") {
-            riffleIntervalRef.current = setInterval(() => {
-                const randomP = Math.floor(Math.random() * (selectedBook.totalPages - 16)) + 12;
+        if (bookState === "FLIPPING") {
+            flipTimerRef.current = setInterval(() => {
+                const randomP = Math.floor(Math.random() * (selectedBook.totalPages - 20)) + 14;
                 setDisplayedPage(randomP);
-                playSound("FLIP");
-            }, 45); // 45ms rapid thumb flick
+                playNostalgiaSound("FLICK");
+            }, 42); // 42ms rapid flutter
         } else {
-            if (riffleIntervalRef.current) clearInterval(riffleIntervalRef.current);
+            if (flipTimerRef.current) clearInterval(flipTimerRef.current);
         }
         return () => {
-            if (riffleIntervalRef.current) clearInterval(riffleIntervalRef.current);
+            if (flipTimerRef.current) clearInterval(flipTimerRef.current);
         };
     }, [bookState, selectedBook]);
 
-    // Handle Open Book from Closed
-    const handleOpenBook = () => {
-        setBookState("OPEN_IDLE");
+    // Handle Open Cover
+    const handleOpenCover = () => {
+        setBookState("OPEN");
         setDisplayedPage(142);
-        setActiveSampleIndex(0);
-        playSound("FLIP");
+        setSamplePageIndex(0);
+        playNostalgiaSound("FLICK");
     };
 
-    // Start / Stop thumb riffle
-    const handleThumbAction = () => {
-        if (inningsOver) return;
+    // Trigger Thumb Action (Flip or Stop)
+    const handleThumbToggle = () => {
+        if (matchEnded) return;
 
-        if (bookState === "OPEN_IDLE") {
-            // Start flipping pages
-            setBookState("RIFFLING");
-            setLastDelivery(null);
-        } else if (bookState === "RIFFLING") {
-            // Slam thumb down on a page
-            setBookState("OPEN_IDLE");
+        if (bookState === "OPEN") {
+            setBookState("FLIPPING");
+            setLastAction(null);
+        } else if (bookState === "FLIPPING") {
+            setBookState("OPEN");
             const landedPage = displayedPage;
-            setActiveSampleIndex(landedPage % selectedBook.samplePages.length);
-            evaluateDelivery(landedPage);
+            setSamplePageIndex(landedPage % selectedBook.samplePages.length);
+            evaluatePageOutcome(landedPage);
         }
     };
 
-    const evaluateDelivery = (pageNum: number) => {
-        const lastDigit = pageNum % 10;
+    const evaluatePageOutcome = (page: number) => {
+        const lastDigit = page % 10;
         let runs: number | "OUT" = 0;
+        let label = "";
         let commentary = "";
         let isBoundary = false;
 
         if (lastDigit === 0) {
             runs = "OUT";
-            commentary = "BOWLED HIM! 💥 Ended in 0. Ball sneaks through the gate!";
-            playSound("WICKET");
+            label = "CLEAN BOWLED! 💥";
+            commentary = `Page ${page} (0). Middle stump uprooted! Class gasps!`;
+            playNostalgiaSound("WICKET");
         } else if (lastDigit === 8) {
             runs = "OUT";
-            commentary = "CAUGHT BEHIND! 🧤 Ended in 8. Faint edge to the keeper!";
-            playSound("WICKET");
+            label = "CAUGHT AT SLIP! 🧤";
+            commentary = `Page ${page} (8). Thick outside edge snatched by first slip!`;
+            playNostalgiaSound("WICKET");
         } else if (lastDigit === 6) {
             runs = 6;
             isBoundary = true;
-            commentary = "SIX! 🚀 Smashed over the cycle stand and onto the roof!";
-            playSound("SIX");
+            label = "SIX! OUT OF THE SCHOOL GROUND! 🚀";
+            commentary = `Page ${page} (6). Lofted clean over the biology lab roof!`;
+            playNostalgiaSound("SIX");
         } else if (lastDigit === 4) {
             runs = 4;
             isBoundary = true;
-            commentary = "FOUR! 🔥 Pierced the gap between third and fourth bench!";
-            playSound("FOUR");
+            label = "FOUR! CRACKING COVER DRIVE! 🔥";
+            commentary = `Page ${page} (4). Rocked back and smashed through extra cover!`;
+            playNostalgiaSound("FOUR");
         } else if (lastDigit === 2) {
             runs = 2;
-            commentary = "Tucked off the pads for 2 quick runs ⚡";
-            playSound("SINGLE");
+            label = "Quick Double (2 Runs) ⚡";
+            commentary = `Page ${page} (2). Pushed into deep square leg, sprinting back for two.`;
+            playNostalgiaSound("SINGLE");
         } else if (lastDigit === 9) {
             runs = 0;
-            commentary = "Dot Ball 🛡️ Forward defensive blocked right back.";
+            label = "Dot Ball (0 Runs) 🛡️";
+            commentary = `Page ${page} (9). Solid forward defensive right under the nose.`;
         } else {
             runs = 1;
-            commentary = `Quick Single 🏃 (Page ended in ${lastDigit}).`;
-            playSound("SINGLE");
+            label = "Single (1 Run) 🏃";
+            commentary = `Page ${page} (${lastDigit}). Tucked off the pads into the leg side.`;
+            playNostalgiaSound("SINGLE");
         }
 
         const newBalls = balls + 1;
@@ -311,304 +342,361 @@ export default function AuthenticBookCricket() {
         if (runs === "OUT") {
             const newWickets = wickets + 1;
             setWickets(newWickets);
-            setInningsOver(true);
-            setLastDelivery({ page: pageNum, runs: "OUT", commentary, isBoundary: false });
+            setMatchEnded(true);
+            setLastAction({ page, runs: "OUT", commentary, label, isBoundary: false });
 
-            setTallyHistory(prev => [
+            setBallLogs(prev => [
                 {
-                    over: `${Math.floor(newBalls / 6)}.${newBalls % 6}`,
-                    page: pageNum,
+                    ballNum: newBalls,
+                    page,
                     runs: "OUT",
-                    runningTotal: score
+                    scoreAfter: score,
+                    desc: commentary
                 },
                 ...prev
             ]);
 
             if (score > highScore) {
                 setHighScore(score);
-                localStorage.setItem("kreo_book_cricket_authentic_high", score.toString());
+                localStorage.setItem("kreo_official_book_cricket_record", score.toString());
             }
         } else {
             const newScore = score + (runs as number);
             setScore(newScore);
-            setLastDelivery({ page: pageNum, runs, commentary, isBoundary });
+            setLastAction({ page, runs, commentary, label, isBoundary });
 
-            setTallyHistory(prev => [
+            setBallLogs(prev => [
                 {
-                    over: `${Math.floor(newBalls / 6)}.${newBalls % 6}`,
-                    page: pageNum,
+                    ballNum: newBalls,
+                    page,
                     runs,
-                    runningTotal: newScore
+                    scoreAfter: newScore,
+                    desc: commentary
                 },
                 ...prev
             ]);
 
             if (newScore > highScore) {
                 setHighScore(newScore);
-                localStorage.setItem("kreo_book_cricket_authentic_high", newScore.toString());
+                localStorage.setItem("kreo_official_book_cricket_record", newScore.toString());
             }
         }
     };
 
-    const handleRestartMatch = () => {
+    const handleResetMatch = () => {
         setScore(0);
         setWickets(0);
         setBalls(0);
-        setInningsOver(false);
-        setLastDelivery(null);
-        setTallyHistory([]);
-        setBookState("OPEN_IDLE");
+        setMatchEnded(false);
+        setLastAction(null);
+        setBallLogs([]);
+        setBookState("OPEN");
         setDisplayedPage(Math.floor(selectedBook.totalPages / 2));
     };
 
-    const currentSample = selectedBook.samplePages[activeSampleIndex] || selectedBook.samplePages[0];
+    const activePageData = selectedBook.samplePages[samplePageIndex] || selectedBook.samplePages[0];
 
     return (
-        <div className="min-h-screen bg-[#1c1815] text-[#2c241b] flex flex-col items-center justify-between p-3 sm:p-6 font-serif relative overflow-x-hidden selection:bg-amber-200">
-            {/* VINTAGE CLASSROOM WOODEN DESK TEXTURE (SURFACE) */}
+        <div className="min-h-screen bg-[#17130f] text-[#2d2217] flex flex-col justify-between p-3 sm:p-6 font-serif select-none relative overflow-x-hidden">
+            
+            {/* WOODEN SCHOOL DESK SURFACE */}
             <div 
-                className="fixed inset-0 pointer-events-none opacity-40 z-0"
+                className="fixed inset-0 pointer-events-none opacity-45 z-0"
                 style={{
-                    backgroundImage: `radial-gradient(#3a2e26 1px, transparent 1px), linear-gradient(180deg, #181411 0%, #291e18 100%)`,
+                    backgroundImage: `radial-gradient(#382c23 1px, transparent 1px), linear-gradient(180deg, #130f0c 0%, #261c16 100%)`,
                     backgroundSize: '24px 24px, 100% 100%'
                 }}
             />
 
-            {/* TOP HEADER: NOSTALGIC STATUS */}
-            <header className="relative z-10 w-full max-w-5xl flex flex-col sm:flex-row items-center justify-between pb-3 border-b border-[#4a3b30] gap-2 text-amber-100/90 font-mono text-xs">
+            {/* CLASSROOM HEADER */}
+            <header className="relative z-10 w-full max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between pb-3 border-b border-[#3d2f25] gap-2 text-amber-100 font-mono text-xs">
                 <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
-                    <span className="tracking-widest font-bold uppercase">
-                        PERIOD 5 • BACKBENCHER'S BOOK CRICKET 🏏
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
+                    <span className="font-bold tracking-widest uppercase">
+                        CLASS X-B • PERIOD 5 (MATHS LAB) // BOOK CRICKET 🏏
                     </span>
                 </div>
-                <div className="flex items-center gap-4">
-                    <span className="text-amber-300">
-                        CLASS RECORD: <strong className="text-white text-sm">{highScore} RUNS</strong>
+                <div className="flex items-center gap-4 text-xs">
+                    <span className="text-amber-300 flex items-center gap-1.5 font-bold">
+                        <Trophy size={14} className="text-amber-400" />
+                        RECESS RECORD: <strong className="text-white text-sm">{highScore} RUNS</strong>
                     </span>
-                    <span className="text-amber-500/60">•</span>
-                    <span className="text-stone-400">CLASS X-B</span>
+                    <span className="text-amber-500/50">•</span>
+                    <span className="text-stone-400">CBSE BOARD 2004-05</span>
                 </div>
             </header>
 
-            {/* MAIN DESK PLAY AREA */}
-            <main className="relative z-10 w-full max-w-5xl flex flex-col lg:flex-row items-center justify-center gap-8 my-auto py-6">
+            {/* DESK WORKSPACE: SCORECARD + OFFICIAL TEXTBOOK + SWITCHER */}
+            <main className="relative z-10 w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 my-auto py-4">
                 
-                {/* LEFT: SKEUOMORPHIC HAND-WRITTEN SCORECARD (ROUGH PAPER) */}
-                <div className="w-full lg:w-72 bg-[#fdfcf7] text-[#1a1816] p-5 rounded shadow-[0_15px_35px_rgba(0,0,0,0.6)] border border-[#e2dccd] font-mono relative rotate-[-1.5deg] self-center">
-                    {/* TAPE ON TOP */}
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-6 bg-[#f3eddb]/90 border border-black/10 shadow-sm rotate-1" />
+                {/* 1. TORN ROUGH PAPER SCORECARD (LEFT) */}
+                <div className="w-full lg:w-72 bg-[#fefdfa] text-[#1e1b18] p-5 rounded shadow-[0_20px_40px_rgba(0,0,0,0.8)] border border-[#e5dfd0] font-mono relative rotate-[-1deg]">
+                    {/* TAPE STRIP */}
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-28 h-6 bg-[#f7f2e4] border border-black/10 shadow-sm rotate-1 flex items-center justify-center text-[9px] text-stone-500 font-sans tracking-widest uppercase">
+                        CELLOTAPE 📌
+                    </div>
 
-                    <div className="text-center pb-2 border-b-2 border-dashed border-[#1a1816]/30 mb-3">
-                        <div className="text-[11px] font-bold tracking-widest text-[#1a1816]/60 uppercase">
-                            OFFICIAL SCORECARD ✏️
+                    <div className="text-center pb-2 border-b-2 border-dashed border-stone-300 mt-1 mb-3">
+                        <div className="text-[10px] font-bold tracking-widest text-stone-500 uppercase">
+                            OFFICIAL MATCH TALLY ✏️
                         </div>
-                        <h2 className="text-2xl font-bold font-serif text-[#0f172a] mt-0.5">
-                            {score} / {wickets}
+                        <h2 className="text-3xl font-serif font-bold text-stone-900 mt-0.5">
+                            {score} <span className="text-xl text-red-600 font-mono">/ {wickets}</span>
                         </h2>
-                        <div className="text-[10px] text-[#1a1816]/70 uppercase">
+                        <div className="text-[10px] text-stone-600 uppercase font-mono">
                             {balls} BALLS ({Math.floor(balls / 6)}.{balls % 6} OVERS) • SR: {balls > 0 ? ((score / balls) * 100).toFixed(0) : 0}
                         </div>
                     </div>
 
-                    {/* LAST BALL CALLOUT */}
-                    <div className="min-h-[52px] flex items-center justify-center text-center p-1.5 rounded bg-amber-50/80 border border-amber-200/80 mb-3">
-                        {lastDelivery ? (
-                            <div className="text-xs">
-                                <span className={`font-bold font-serif text-sm ${lastDelivery.runs === 'OUT' ? 'text-red-700' : lastDelivery.isBoundary ? 'text-blue-800' : 'text-stone-800'}`}>
-                                    {lastDelivery.runs === 'OUT' ? 'WICKET!' : `${lastDelivery.runs} RUNS`}
+                    {/* LIVE COMMENTARY / OUTCOME BOX */}
+                    <div className="min-h-[55px] flex items-center justify-center text-center p-2 rounded bg-amber-50 border border-amber-200/90 mb-3">
+                        {lastAction ? (
+                            <div>
+                                <span className={`font-bold font-serif text-sm ${
+                                    lastAction.runs === 'OUT' ? 'text-red-700' :
+                                    lastAction.isBoundary ? 'text-blue-800' : 'text-stone-800'
+                                }`}>
+                                    {lastAction.label}
                                 </span>
                                 <div className="text-[10px] text-stone-600 leading-tight mt-0.5 font-sans">
-                                    {lastDelivery.commentary}
+                                    {lastAction.commentary}
                                 </div>
                             </div>
                         ) : (
-                            <span className="text-[11px] text-stone-400 italic">
-                                {bookState === 'CLOSED' ? 'Open book to start match' : 'Hold thumb & release to flip'}
+                            <span className="text-[11px] text-stone-400 italic font-serif">
+                                {bookState === 'CLOSED' ? 'Open textbook cover to bat' : 'Thumb on page corner ready to flip'}
                             </span>
                         )}
                     </div>
 
-                    {/* OVER-BY-OVER TALLY SCROLL */}
-                    <div className="text-[11px] text-stone-600 mb-2 font-bold uppercase flex justify-between border-b border-black/10 pb-1">
+                    {/* BALL-BY-BALL LOG */}
+                    <div className="text-[10px] text-stone-500 font-bold uppercase flex justify-between border-b border-stone-200 pb-1 mb-1">
                         <span>BALL (PAGE)</span>
-                        <span>RUNS (TOTAL)</span>
+                        <span>RUNS (SCORE)</span>
                     </div>
                     <div className="max-h-36 overflow-y-auto space-y-1 text-xs pr-1 font-mono">
-                        {tallyHistory.length === 0 ? (
+                        {ballLogs.length === 0 ? (
                             <div className="text-[10px] text-stone-400 text-center py-4 italic">
-                                No deliveries bowled yet.
+                                Waiting for 1st delivery...
                             </div>
                         ) : (
-                            tallyHistory.map((item, idx) => (
-                                <div key={idx} className="flex justify-between items-center py-0.5 border-b border-stone-100">
+                            ballLogs.map((b, i) => (
+                                <div key={i} className="flex justify-between items-center py-0.5 border-b border-stone-100">
                                     <span className="text-stone-500">
-                                        B{tallyHistory.length - idx} (p.{item.page})
+                                        B{ballLogs.length - i} (p.{b.page})
                                     </span>
-                                    <span className={`font-bold ${item.runs === 'OUT' ? 'text-red-600' : item.runs === 6 ? 'text-amber-700' : item.runs === 4 ? 'text-blue-700' : 'text-stone-800'}`}>
-                                        {item.runs === 'OUT' ? 'W' : `+${item.runs}`} <span className="text-stone-400 font-normal">({item.runningTotal})</span>
+                                    <span className={`font-bold ${
+                                        b.runs === 'OUT' ? 'text-red-600 font-serif' :
+                                        b.runs === 6 ? 'text-amber-800' :
+                                        b.runs === 4 ? 'text-blue-800' : 'text-stone-800'
+                                    }`}>
+                                        {b.runs === 'OUT' ? 'OUT' : `+${b.runs}`} <span className="text-stone-400 font-normal">({b.scoreAfter})</span>
                                     </span>
                                 </div>
                             ))
                         )}
                     </div>
 
-                    {/* RESTART BUTTON */}
-                    {inningsOver && (
+                    {matchEnded && (
                         <button
-                            onClick={handleRestartMatch}
-                            className="w-full mt-4 py-2 bg-[#0f172a] text-white hover:bg-amber-600 transition-colors text-xs uppercase font-bold tracking-wider rounded shadow cursor-pointer flex items-center justify-center gap-1.5"
+                            onClick={handleResetMatch}
+                            className="w-full mt-4 py-2.5 bg-stone-900 text-amber-300 hover:bg-amber-600 hover:text-white transition-colors text-xs uppercase font-bold tracking-widest rounded shadow cursor-pointer flex items-center justify-center gap-1.5"
                         >
-                            <RefreshCw size={12} /> Play Next Innings
+                            <RefreshCw size={13} /> Bat Next Innings
                         </button>
                     )}
                 </div>
 
-                {/* CENTER: THE AUTHENTIC 3D BOOK ON DESK */}
+                {/* 2. THE OFFICIAL NCERT TEXTBOOK + KID'S FLICKING HAND (CENTER) */}
                 <div className="flex flex-col items-center">
                     
-                    {/* CASE A: CLOSED BOOK (SKEUOMORPHIC VINTAGE COVER) */}
+                    {/* CASE A: OFFICIAL CLOSED NCERT TEXTBOOK COVER */}
                     {bookState === "CLOSED" && (
                         <motion.div
-                            initial={{ scale: 0.96 }}
+                            initial={{ scale: 0.95 }}
                             animate={{ scale: 1 }}
                             whileHover={{ scale: 1.02 }}
-                            onClick={handleOpenBook}
-                            className={`w-72 sm:w-[380px] h-96 sm:h-[480px] ${selectedBook.coverBg} rounded-r-lg rounded-l-sm border-4 ${selectedBook.coverAccent} shadow-[20px_25px_50px_rgba(0,0,0,0.85)] p-8 flex flex-col justify-between text-amber-100 cursor-pointer relative group transition-transform`}
+                            onClick={handleOpenCover}
+                            className={`w-72 sm:w-[380px] h-96 sm:h-[500px] bg-gradient-to-br ${selectedBook.coverColor} rounded-r-xl rounded-l-sm border-4 ${selectedBook.accentBorder} shadow-[25px_30px_60px_rgba(0,0,0,0.9)] p-6 sm:p-8 flex flex-col justify-between text-white cursor-pointer relative group transition-all`}
                         >
-                            {/* SPINE CREASE ON LEFT */}
-                            <div className="absolute top-0 bottom-0 left-0 w-5 bg-gradient-to-r from-black/40 via-transparent to-black/20 border-r border-black/30 rounded-l-sm" />
+                            {/* SPINE BINDING CREASE */}
+                            <div className="absolute top-0 bottom-0 left-0 w-6 bg-gradient-to-r from-black/50 via-transparent to-black/20 border-r border-black/40 rounded-l-sm" />
 
-                            {/* WORN GOLD EMBOSSED EMBLEM */}
-                            <div className="text-center mt-4">
-                                <div className="w-14 h-14 mx-auto rounded-full border-2 border-amber-300/60 flex items-center justify-center text-amber-300 mb-3 opacity-90">
-                                    🏛️
+                            {/* TOP EMBLEMS: CBSE SEAL & CODE */}
+                            <div className="flex items-center justify-between border-b border-white/20 pb-3">
+                                <div className="text-[10px] font-mono tracking-widest uppercase opacity-90">
+                                    NCERT CODE: {selectedBook.code}
                                 </div>
-                                <div className="text-[10px] tracking-[0.25em] font-mono text-amber-200/80 uppercase">
-                                    NATIONAL COUNCIL OF EDUCATIONAL RESEARCH
+                                <div className="text-[10px] font-mono uppercase bg-black/40 px-2 py-0.5 rounded border border-white/20 text-amber-300">
+                                    CBSE CURRICULUM
                                 </div>
-                                <h1 className="text-3xl sm:text-4xl font-serif font-bold text-amber-100 tracking-wide mt-3 drop-shadow-md">
+                            </div>
+
+                            {/* CENTER COVER ARTWORK */}
+                            <div className="text-center my-auto">
+                                <div className="text-5xl sm:text-6xl mb-2 drop-shadow-md">
+                                    {selectedBook.symbolEmoji}
+                                </div>
+                                <div className="text-xs font-serif tracking-widest text-amber-200/90 uppercase">
+                                    {selectedBook.hindiTitle}
+                                </div>
+                                <h1 className="text-3xl sm:text-4xl font-serif font-extrabold tracking-wider text-white drop-shadow-lg mt-1">
                                     {selectedBook.title}
                                 </h1>
-                                <p className="text-xs font-serif italic text-amber-200/90 mt-1">
+                                <p className="text-xs font-serif italic text-white/80 mt-1">
                                     {selectedBook.subTitle}
                                 </p>
                             </div>
 
-                            {/* BOTTOM VINTAGE LABELS */}
-                            <div className="text-center border-t border-amber-300/30 pt-4">
-                                <div className="text-[11px] font-mono text-amber-200/90 uppercase tracking-widest">
-                                    {selectedBook.totalPages} PAGES • BOARD CURRICULUM
+                            {/* BOTTOM OFFICIAL PUBLISHER BANNER */}
+                            <div className="text-center border-t border-white/20 pt-3">
+                                <div className="text-[9px] font-mono text-white/70 uppercase tracking-widest leading-tight">
+                                    राष्ट्रीय शैक्षिक अनुसंधान और प्रशिक्षण परिषद्
+                                    <br />
+                                    NATIONAL COUNCIL OF EDUCATIONAL RESEARCH AND TRAINING
                                 </div>
-                                <div className="mt-4 px-4 py-2 bg-amber-400 text-black font-mono font-bold text-xs uppercase tracking-widest rounded shadow group-hover:bg-amber-300 transition-colors animate-pulse">
-                                    📖 Click to Open Textbook
+                                <div className="mt-3 py-2 bg-amber-400 text-stone-950 font-mono font-bold text-xs uppercase tracking-widest rounded shadow group-hover:bg-amber-300 transition-colors animate-pulse">
+                                    📖 Click to Open & Play
                                 </div>
                             </div>
                         </motion.div>
                     )}
 
-                    {/* CASE B: OPEN VINTAGE TEXTBOOK WITH PAGE RIFFLE PHYSICS */}
+                    {/* CASE B: OPEN NCERT TEXTBOOK WITH KID'S FLICKING HAND ANIMATION */}
                     {bookState !== "CLOSED" && (
                         <div className="relative">
-                            {/* THE OPEN BOOK STRUCTURE */}
-                            <div className="w-80 sm:w-[580px] h-[360px] sm:h-[440px] bg-[#fdfaf2] text-[#221c16] rounded-sm shadow-[0_25px_60px_rgba(0,0,0,0.85)] border border-[#d6cfbe] flex relative overflow-hidden">
+                            
+                            {/* THE SKEUOMORPHIC OPEN BOOK SPREAD */}
+                            <div className="w-80 sm:w-[600px] h-[360px] sm:h-[460px] bg-[#fdfaf2] text-[#221c16] rounded-sm shadow-[0_30px_70px_rgba(0,0,0,0.9)] border border-[#d3ccba] flex relative overflow-hidden">
                                 
-                                {/* DEEP BOOK SPINE CREASE */}
-                                <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 bg-gradient-to-r from-black/25 via-black/40 to-black/25 pointer-events-none z-20 shadow-inner" />
+                                {/* CENTER SEAM & DEEP SHADOW */}
+                                <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 bg-gradient-to-r from-black/25 via-black/45 to-black/25 pointer-events-none z-20 shadow-inner" />
 
-                                {/* LEFT PAGE: CHAPTER HEADING & THEOREMS */}
+                                {/* LEFT PAGE (CHAPTER HEADING & THEOREMS) */}
                                 <div className="w-1/2 p-4 sm:p-6 pr-6 sm:pr-8 flex flex-col justify-between border-r border-[#e5decb] relative">
                                     <div>
-                                        <div className="text-[9px] font-mono uppercase tracking-wider text-stone-500 border-b border-stone-300 pb-1 mb-2">
-                                            {currentSample.chapter}
+                                        <div className="flex justify-between items-center border-b border-stone-300 pb-1 mb-2 text-[9px] font-mono uppercase text-stone-500">
+                                            <span>{activePageData.chapterNum}</span>
+                                            <span className="font-serif">{activePageData.chapterHindi}</span>
                                         </div>
-                                        <h3 className="font-serif font-bold text-sm sm:text-base text-stone-900 leading-tight mb-2">
-                                            {currentSample.heading}
+                                        <h3 className="font-serif font-bold text-xs sm:text-sm text-stone-900 uppercase leading-snug mb-2">
+                                            {activePageData.chapterEnglish}
                                         </h3>
-                                        <div className="space-y-1.5 text-[10px] sm:text-xs text-stone-700 leading-relaxed font-serif">
-                                            {currentSample.bodyText.map((paragraph, i) => (
-                                                <p key={i}>{paragraph}</p>
+                                        <div className="text-[10px] font-serif font-semibold text-stone-800 mb-2">
+                                            {activePageData.sectionTitle}
+                                        </div>
+                                        <div className="space-y-1.5 text-[9px] sm:text-[11px] text-stone-700 leading-relaxed font-serif">
+                                            {activePageData.contentParagraphs.slice(0, 3).map((p, i) => (
+                                                <p key={i}>{p}</p>
                                             ))}
                                         </div>
-                                        {currentSample.diagram && (
-                                            <div className="mt-3 p-1.5 bg-stone-100 border border-stone-300 rounded text-[9px] sm:text-[10px] font-mono text-stone-800">
-                                                {currentSample.diagram}
+
+                                        {activePageData.formulaBox && (
+                                            <div className="mt-2.5 p-1.5 rounded bg-amber-50/80 border border-amber-300/80 text-[8px] sm:text-[10px] font-mono text-stone-800">
+                                                {activePageData.formulaBox}
                                             </div>
                                         )}
                                     </div>
 
-                                    {/* BOTTOM LEFT PAGE NUMBER */}
+                                    {/* LEFT BOTTOM PAGE NUMBER */}
                                     <div className="flex justify-between items-end text-[10px] font-mono text-stone-500 border-t border-stone-300 pt-1 mt-2">
                                         <span>{Math.max(1, displayedPage - 1)}</span>
-                                        <span className="text-[9px] italic text-stone-400">NCERT Class X</span>
+                                        <span className="text-[8px] italic text-stone-400">NCERT Class X • {selectedBook.title}</span>
                                     </div>
                                 </div>
 
-                                {/* RIGHT PAGE: THE ACTION SCORING PAGE */}
-                                <div className="w-1/2 p-4 sm:p-6 pl-6 sm:pl-8 flex flex-col justify-between relative bg-gradient-to-l from-[#faf6eb] to-[#fdfaf2]">
+                                {/* RIGHT PAGE (ACTION SCORING SPREAD) */}
+                                <div className="w-1/2 p-4 sm:p-6 pl-6 sm:pl-8 flex flex-col justify-between relative bg-gradient-to-l from-[#faf5e8] to-[#fdfaf2]">
                                     <div>
                                         <div className="text-[9px] font-mono uppercase tracking-wider text-stone-500 text-right border-b border-stone-300 pb-1 mb-2">
-                                            EXERCISE & PROBLEMS
+                                            EXERCISES & EVALUATION
                                         </div>
 
                                         {/* PENCIL MARGIN DOODLE */}
-                                        <div className="p-2 rounded bg-amber-100/60 border border-amber-300/60 text-[10px] sm:text-xs text-stone-800 font-sans italic my-2">
-                                            ✏️ {currentSample.doodle}
+                                        <div className="p-2 rounded bg-amber-100/60 border border-amber-300/60 text-[9px] sm:text-xs text-stone-800 font-sans italic my-2">
+                                            ✏️ {activePageData.roughDoodle}
                                         </div>
 
-                                        {/* ACTIVE FLIPPING MOTION VISUAL */}
+                                        {/* SKEUOMORPHIC ACTIVE PAGE FLUTTERING STATE */}
                                         <div className="my-auto text-center py-4">
-                                            {bookState === "RIFFLING" ? (
+                                            {bookState === "FLIPPING" ? (
                                                 <div className="space-y-1">
-                                                    <div className="text-3xl sm:text-4xl font-mono font-bold tracking-widest text-amber-800 animate-pulse">
+                                                    <div className="text-3xl sm:text-5xl font-mono font-bold tracking-widest text-amber-800 animate-pulse">
                                                         p. {displayedPage}
                                                     </div>
                                                     <div className="text-[10px] font-mono text-stone-500 uppercase tracking-widest animate-bounce">
-                                                        Flicking Pages...
+                                                        Thumb Riffle in Progress...
                                                     </div>
                                                 </div>
                                             ) : (
                                                 <div className="space-y-1">
                                                     <div className="text-xs font-mono uppercase tracking-widest text-stone-400">
-                                                        Landed On
+                                                        Landed On Page
                                                     </div>
-                                                    <div className="text-4xl sm:text-5xl font-mono font-bold text-stone-900 tracking-wider">
-                                                        Page {displayedPage}
+                                                    <div className="text-4xl sm:text-6xl font-mono font-bold text-stone-900 tracking-wider">
+                                                        {displayedPage}
                                                     </div>
-                                                    <div className="text-xs font-mono text-amber-900 font-bold uppercase mt-1">
-                                                        Last Digit: <span className="text-xl text-red-700 bg-amber-200/80 px-2 py-0.5 rounded">{displayedPage % 10}</span>
+                                                    <div className="text-xs font-mono text-stone-900 font-bold uppercase mt-1">
+                                                        Scoring Digit: <span className="text-xl text-red-700 bg-amber-200/90 px-2 py-0.5 rounded border border-red-700/30">{displayedPage % 10}</span>
                                                     </div>
                                                 </div>
                                             )}
                                         </div>
                                     </div>
 
-                                    {/* BOTTOM RIGHT PAGE NUMBER (REAL NOSTALGIA POSITION) */}
+                                    {/* RIGHT BOTTOM PAGE NUMBER (OFFICIAL NCERT FONT POSITION) */}
                                     <div className="flex justify-between items-end text-[11px] font-mono font-bold text-stone-800 border-t border-stone-300 pt-1 mt-2">
-                                        <span className="text-[9px] text-stone-400 font-normal">Classroom Recess</span>
-                                        <span className="text-sm text-stone-900 bg-stone-200/80 px-1.5 rounded">
+                                        <span className="text-[8px] text-stone-400 font-normal">Classroom Recess</span>
+                                        <span className="text-sm text-stone-900 bg-amber-100 px-2 py-0.5 rounded border border-stone-300">
                                             p. {displayedPage}
                                         </span>
                                     </div>
                                 </div>
+
+                                {/* 3. REAL KID'S HAND & THUMB OVERLAY ON PAGE CORNER */}
+                                <motion.div 
+                                    animate={bookState === "FLIPPING" ? {
+                                        rotate: [0, -8, 4, -6, 0],
+                                        y: [0, -4, 2, -3, 0],
+                                        transition: { repeat: Infinity, duration: 0.15 }
+                                    } : { rotate: 0, y: 0 }}
+                                    className="absolute bottom-1 right-2 pointer-events-none z-30 flex items-end drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
+                                >
+                                    <div className="relative">
+                                        {/* ILLUSTRATED STUDENT HAND WITH THUMB PRESSING CORNER */}
+                                        <div className="w-16 h-20 sm:w-20 sm:h-24 bg-[#e8be96] rounded-t-2xl border-2 border-[#b88c66] shadow-xl relative -rotate-12 flex flex-col justify-between p-1">
+                                            {/* KNUCKLE CREASES */}
+                                            <div className="w-6 h-0.5 bg-[#b88c66]/40 mx-auto rounded mt-3" />
+                                            <div className="w-8 h-0.5 bg-[#b88c66]/40 mx-auto rounded" />
+                                            {/* THUMBNAIL WITH INK STAIN */}
+                                            <div className="w-5 h-6 bg-[#f3d3b6] rounded-t-lg border border-[#b88c66] mx-auto mb-1 relative overflow-hidden">
+                                                {/* BLUE REYNOLDS INK STAIN */}
+                                                <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-blue-700/80" />
+                                            </div>
+                                        </div>
+                                        <span className="absolute -top-4 -left-1 text-[8px] font-mono font-bold bg-black/80 text-amber-200 px-1.5 py-0.5 rounded shadow whitespace-nowrap">
+                                            {bookState === "FLIPPING" ? "Flicking..." : "Thumb Grip"}
+                                        </span>
+                                    </div>
+                                </motion.div>
                             </div>
 
-                            {/* FLIP CONTROLS */}
+                            {/* CONTROLS */}
                             <div className="mt-6 flex flex-col items-center gap-3">
                                 <button
-                                    onClick={handleThumbAction}
-                                    disabled={inningsOver}
-                                    className={`w-72 sm:w-80 py-4 uppercase font-mono tracking-widest text-base sm:text-lg font-bold transition-all shadow-[0_10px_25px_rgba(0,0,0,0.5)] rounded cursor-pointer ${
-                                        inningsOver
-                                            ? "bg-stone-700 text-stone-400 cursor-not-allowed"
-                                            : bookState === "RIFFLING"
-                                            ? "bg-red-600 hover:bg-red-500 text-white animate-pulse shadow-red-500/50"
-                                            : "bg-amber-500 hover:bg-amber-400 text-stone-950"
+                                    onClick={handleThumbToggle}
+                                    disabled={matchEnded}
+                                    className={`w-72 sm:w-96 py-4 uppercase font-mono tracking-widest text-base sm:text-xl font-bold transition-all shadow-[0_15px_30px_rgba(0,0,0,0.7)] rounded-lg cursor-pointer ${
+                                        matchEnded
+                                            ? "bg-stone-800 text-stone-500 cursor-not-allowed border border-stone-700"
+                                            : bookState === "FLIPPING"
+                                            ? "bg-red-600 hover:bg-red-500 text-white animate-pulse shadow-red-600/50 border-2 border-red-400"
+                                            : "bg-amber-400 hover:bg-amber-300 text-stone-950 border-2 border-amber-300"
                                     }`}
                                 >
-                                    {bookState === "RIFFLING" ? "🛑 SLAM THUMB DOWN!" : "📖 FLIP PAGES (HOLD & RELEASE)"}
+                                    {bookState === "FLIPPING" ? "🛑 SLAM THUMB DOWN! (STOP)" : "📖 FLIP TEXTBOOK (CLICK TO RIFFLE)"}
                                 </button>
-                                <p className="text-[11px] font-mono text-amber-200/60 uppercase">
+                                <p className="text-[11px] font-mono text-amber-200/70 uppercase">
                                     Last digit of page: 2, 4, 6 = Runs • 1, 3, 5, 7 = Single • 0 or 8 = OUT
                                 </p>
                             </div>
@@ -616,41 +704,50 @@ export default function AuthenticBookCricket() {
                     )}
                 </div>
 
-                {/* RIGHT: TEXTBOOK SWITCHER */}
-                <div className="w-full lg:w-60 flex flex-col gap-2.5 font-mono text-xs text-amber-100">
-                    <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider mb-1">
-                        [SWITCH TEXTBOOK / WEAPON]
+                {/* 3. OFFICIAL NCERT TEXTBOOK PICKER (RIGHT) */}
+                <div className="w-full lg:w-64 flex flex-col gap-3 font-mono text-xs text-amber-100">
+                    <span className="text-[10px] text-amber-400 font-bold uppercase tracking-widest flex items-center gap-1.5">
+                        <BookOpen size={13} />
+                        [CBSE OFFICIAL PRESCRIBED TEXTBOOKS]
                     </span>
-                    {BOOKS.map((b) => (
+                    {OFFICIAL_BOOKS.map((b) => (
                         <button
                             key={b.id}
                             onClick={() => {
                                 setSelectedBook(b);
                                 setBookState("CLOSED");
-                                setInningsOver(false);
+                                setMatchEnded(false);
                                 setScore(0);
                                 setBalls(0);
                                 setWickets(0);
-                                setTallyHistory([]);
-                                setLastDelivery(null);
+                                setBallLogs([]);
+                                setLastAction(null);
                             }}
-                            className={`p-3 rounded border text-left transition-all cursor-pointer ${
+                            className={`p-3.5 rounded-lg border text-left transition-all cursor-pointer ${
                                 selectedBook.id === b.id
-                                    ? "bg-amber-500/20 border-amber-400 text-white font-bold shadow-md"
-                                    : "bg-black/30 border-[#4a3b30] text-stone-400 hover:border-stone-400 hover:text-stone-200"
+                                    ? "bg-amber-500/25 border-amber-400 text-white font-bold shadow-lg ring-1 ring-amber-400"
+                                    : "bg-black/40 border-[#3d2f25] text-stone-400 hover:border-stone-400 hover:text-stone-200"
                             }`}
                         >
-                            <div className="text-[10px] text-amber-400 uppercase">{b.classLabel} • {b.totalPages}p</div>
-                            <div className="font-serif text-sm text-stone-100 mt-0.5">{b.title}</div>
-                            <div className="text-[10px] text-stone-400 italic mt-0.5">{b.subject}</div>
+                            <div className="flex justify-between items-center text-[10px] text-amber-400 uppercase font-mono">
+                                <span>CODE {b.code}</span>
+                                <span>{b.totalPages} PAGES</span>
+                            </div>
+                            <div className="font-serif text-base text-stone-100 font-bold mt-1 flex items-center gap-2">
+                                <span>{b.symbolEmoji}</span>
+                                <span>{b.title}</span>
+                            </div>
+                            <div className="text-[10px] text-stone-400 italic mt-0.5">
+                                {b.hindiTitle} • {b.subTitle}
+                            </div>
                         </button>
                     ))}
                 </div>
             </main>
 
-            {/* BOTTOM NOSTALGIC FOOTER */}
+            {/* CLASSROOM FOOTER RULES */}
             <footer className="relative z-10 text-[11px] font-mono text-amber-200/50 uppercase tracking-widest pb-2 text-center">
-                Strict School Recess Rules: No peaking at pages beforehand • 0 & 8 are immediate dismissals.
+                Strict School Rules: No folding page corners • 0 or 8 is immediate dismissal • Class X Board syllabus.
             </footer>
         </div>
     );
