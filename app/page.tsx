@@ -1,17 +1,18 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Trophy, RefreshCw, Volume2, Sparkles, BookOpen, ShieldCheck } from "lucide-react";
+import { Trophy, RefreshCw, Volume2, Sparkles, BookOpen, Users, User, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-interface OfficialNcertBook {
+// --- TEXTBOOK PRESETS ---
+interface TextbookOption {
     id: string;
     code: string;
     title: string;
     hindiTitle: string;
     subTitle: string;
     subject: string;
-    coverColor: string; // Tailwind gradient / color
+    coverColor: string;
     accentBorder: string;
     symbolEmoji: string;
     totalPages: number;
@@ -21,21 +22,21 @@ interface OfficialNcertBook {
         chapterEnglish: string;
         sectionTitle: string;
         contentParagraphs: string[];
-        formulaBox?: string;
+        formulaBox: string;
         roughDoodle: string;
     }>;
 }
 
-const OFFICIAL_BOOKS: OfficialNcertBook[] = [
+const TEXTBOOKS: TextbookOption[] = [
     {
-        id: "ncert-maths-10",
+        id: "ncert-math-10",
         code: "1062",
         title: "MATHEMATICS",
         hindiTitle: "गणित",
         subTitle: "Textbook for Class X",
         subject: "Central Board of Secondary Education (CBSE)",
-        coverColor: "from-[#8B3A1C] via-[#6B280E] to-[#4A1806]", // Official Class 10 Math Brown/Rust
-        accentBorder: "border-[#A04522]",
+        coverColor: "from-[#8B3A2B] via-[#68271B] to-[#3B140E]",
+        accentBorder: "border-[#D97706]",
         symbolEmoji: "📐",
         totalPages: 348,
         samplePages: [
@@ -92,7 +93,7 @@ const OFFICIAL_BOOKS: OfficialNcertBook[] = [
         hindiTitle: "विज्ञान",
         subTitle: "Textbook for Class X",
         subject: "Central Board of Secondary Education (CBSE)",
-        coverColor: "from-[#1E3A8A] via-[#172554] to-[#0F172A]", // Official Science Deep Blue
+        coverColor: "from-[#1E3A8A] via-[#172554] to-[#0F172A]",
         accentBorder: "border-[#3B82F6]",
         symbolEmoji: "🧬",
         totalPages: 298,
@@ -117,13 +118,13 @@ const OFFICIAL_BOOKS: OfficialNcertBook[] = [
                 chapterEnglish: "LIGHT – REFLECTION AND REFRACTION",
                 sectionTitle: "10.3 Refraction of Light & Snell's Law",
                 contentParagraphs: [
-                    "Light travels along a straight line in a transparent medium.",
-                    "When light travels from rarer to denser medium, it bends towards the normal.",
-                    "Snell's Law: The ratio of sine of angle of incidence to sine of angle of refraction is a constant.",
-                    "sin i / sin r = constant = n₂₁ (Refractive Index)"
+                    "The ratio of sine of angle of incidence to sine of angle of refraction is a constant, for the light of a given colour.",
+                    "sin i / sin r = constant = n₂₁",
+                    "This constant value is called the refractive index of the second medium with respect to the first.",
+                    "Absolute refractive index of glass = 1.52, Water = 1.33, Diamond = 2.42."
                 ],
-                formulaBox: "Mirror Formula: 1/v + 1/u = 1/f | Lens Formula: 1/v - 1/u = 1/f",
-                roughDoodle: "Ray diagram sketch with sunglasses drawn on the focal point"
+                formulaBox: "Mirror formula: 1/v + 1/u = 1/f | Lens formula: 1/v - 1/u = 1/f",
+                roughDoodle: "Compass poke holes right through the center of Snell's prism"
             }
         ]
     },
@@ -133,622 +134,638 @@ const OFFICIAL_BOOKS: OfficialNcertBook[] = [
         title: "FIRST FLIGHT",
         hindiTitle: "प्रथम उड़ान",
         subTitle: "Textbook in English for Class X",
-        subject: "Central Board of Secondary Education (CBSE)",
-        coverColor: "from-[#065F46] via-[#044E3B] to-[#022C22]", // Official English Forest Green
-        accentBorder: "border-[#10B981]",
+        subject: "National Council of Educational Research and Training",
+        coverColor: "from-[#14532D] via-[#0F3921] to-[#052E16]",
+        accentBorder: "border-[#22C55E]",
         symbolEmoji: "🕊️",
-        totalPages: 184,
+        totalPages: 162,
         samplePages: [
             {
                 chapterNum: "PROSE 1",
-                chapterHindi: "एक पत्र भगवान के नाम",
+                chapterHindi: "ईश्वर के नाम पत्र",
                 chapterEnglish: "A LETTER TO GOD",
-                sectionTitle: "By G.L. Fuentes — The Story of Lencho",
+                sectionTitle: "By Gregorio López y Fuentes",
                 contentParagraphs: [
                     "The house — the only one in the entire valley — sat on the crest of a low hill.",
-                    "Throughout the morning Lencho — who knew his fields intimately — had done nothing else but see the sky towards the north-east.",
-                    "'Now we're really going to get some water, woman.'",
-                    "The postmaster — a fat, amiable fellow — also broke out laughing, but almost immediately he turned serious: 'What faith! I wish I had the faith of the man who wrote this letter.'"
+                    "From this height one could see the river and the field of ripe corn dotted with the flowers.",
+                    "All through the night, Lencho thought only of his one hope: the help of God, whose eyes see everything.",
+                    "'God,' he wrote, 'if you don't help me, my family and I will go hungry this year. I need a hundred pesos.'"
                 ],
-                formulaBox: "Moral: Unshakable faith in God and innocence of rural farmers.",
-                roughDoodle: "Reynolds 045 blue ink bird drawing flying off the margin"
+                formulaBox: "Vocabulary: Crest (Top of a hill) | Downpour (Heavy rain) | Solitary (Single, isolated)",
+                roughDoodle: "Blue Reynolds ink stamp doodle + 'KREO 4 LIFE'"
             }
         ]
     }
 ];
 
-export default function SuperAuthenticBookCricket() {
-    const [selectedBook, setSelectedBook] = useState<OfficialNcertBook>(OFFICIAL_BOOKS[0]);
-    const [bookState, setBookState] = useState<"CLOSED" | "OPEN" | "FLIPPING">("CLOSED");
+export default function BookCricketPage() {
+    // 1v1 Pass & Play State
+    const [maxWickets, setMaxWickets] = useState<number>(3);
+    const [currentInnings, setCurrentInnings] = useState<1 | 2>(1);
+    const [p1Name, setP1Name] = useState("Player 1 (Desk Left)");
+    const [p2Name, setP2Name] = useState("Player 2 (Desk Right)");
     
-    // Page state
-    const [displayedPage, setDisplayedPage] = useState<number>(142);
-    const [samplePageIndex, setSamplePageIndex] = useState<number>(0);
+    // Innings 1 data
+    const [p1Runs, setP1Runs] = useState(0);
+    const [p1Wickets, setP1Wickets] = useState(0);
+    const [p1Balls, setP1Balls] = useState(0);
+    const [p1History, setP1History] = useState<Array<{ page: number; run: number | string; commentary: string }>>([]);
 
-    // Scorecard state
-    const [score, setScore] = useState(0);
-    const [wickets, setWickets] = useState(0);
-    const [balls, setBalls] = useState(0);
-    const [highScore, setHighScore] = useState(0);
-    const [matchEnded, setMatchEnded] = useState(false);
-    
-    const [lastAction, setLastAction] = useState<{
-        page: number;
-        runs: number | "OUT";
-        commentary: string;
-        label: string;
-        isBoundary: boolean;
-    } | null>(null);
+    // Innings 2 data
+    const [p2Runs, setP2Runs] = useState(0);
+    const [p2Wickets, setP2Wickets] = useState(0);
+    const [p2Balls, setP2Balls] = useState(0);
+    const [p2History, setP2History] = useState<Array<{ page: number; run: number | string; commentary: string }>>([]);
 
-    const [ballLogs, setBallLogs] = useState<Array<{
-        ballNum: number;
-        page: number;
-        runs: number | "OUT";
-        scoreAfter: number;
-        desc: string;
-    }>>([]);
+    // Match Flow State
+    const [matchState, setMatchState] = useState<"innings1" | "inningsBreak" | "innings2" | "matchOver">("innings1");
+    const [winner, setWinner] = useState<string | null>(null);
 
-    const flipTimerRef = useRef<NodeJS.Timeout | null>(null);
-    const audioContextRef = useRef<AudioContext | null>(null);
+    // Textbook & Physics State
+    const [selectedBook, setSelectedBook] = useState<TextbookOption>(TEXTBOOKS[0]);
+    const [isBookOpen, setIsBookOpen] = useState<boolean>(false);
+    const [isFlipping, setIsFlipping] = useState<boolean>(false);
+    const [currentPageNum, setCurrentPageNum] = useState<number>(1);
+    const [lastOutcome, setLastOutcome] = useState<{ page: number; run: number | string; commentary: string; badge: string } | null>(null);
 
-    // Dynamic Sound Synthesis
-    const playNostalgiaSound = (type: "FLICK" | "FOUR" | "SIX" | "WICKET" | "SINGLE") => {
+    // Audio Context Synthesizer
+    const audioCtxRef = useRef<AudioContext | null>(null);
+
+    const playSfx = (type: "rustle" | "boundary" | "wicket" | "single") => {
         try {
-            if (!audioContextRef.current) {
-                audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+            if (!audioCtxRef.current) {
+                const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+                audioCtxRef.current = new AudioContextClass();
             }
-            const ctx = audioContextRef.current;
+            const ctx = audioCtxRef.current;
             if (ctx.state === "suspended") ctx.resume();
 
-            if (type === "FLICK") {
-                // Crisp paper flutter rustle
-                const bufferSize = ctx.sampleRate * 0.035;
-                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) {
-                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.25));
-                }
-                const noise = ctx.createBufferSource();
-                noise.buffer = buffer;
-                const filter = ctx.createBiquadFilter();
-                filter.type = "bandpass";
-                filter.frequency.value = 2200;
-                noise.connect(filter);
-                filter.connect(ctx.destination);
-                noise.start();
-            } else if (type === "FOUR" || type === "SIX") {
-                // Wooden willow bat sweet spot punch
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = "triangle";
-                osc.frequency.setValueAtTime(type === "SIX" ? 420 : 340, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(70, ctx.currentTime + 0.22);
-                gain.gain.setValueAtTime(0.4, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.22);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.22);
-            } else if (type === "WICKET") {
-                // Shattered wooden stumps sound
+            const now = ctx.currentTime;
+            if (type === "rustle") {
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 osc.type = "sawtooth";
-                osc.frequency.setValueAtTime(180, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(35, ctx.currentTime + 0.35);
-                gain.gain.setValueAtTime(0.45, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.exponentialRampToValueAtTime(40, now + 0.08);
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
                 osc.connect(gain);
                 gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.35);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === "boundary") {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = "triangle";
+                osc.frequency.setValueAtTime(320, now);
+                osc.frequency.exponentialRampToValueAtTime(640, now + 0.15);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } else if (type === "wicket") {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = "square";
+                osc.frequency.setValueAtTime(140, now);
+                osc.frequency.exponentialRampToValueAtTime(30, now + 0.35);
+                gain.gain.setValueAtTime(0.35, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.35);
             }
-        } catch (e) {}
-    };
-
-    // Load High Score
-    useEffect(() => {
-        const saved = localStorage.getItem("kreo_official_book_cricket_record");
-        if (saved) setHighScore(parseInt(saved, 10));
-    }, []);
-
-    // Flip Loop
-    useEffect(() => {
-        if (bookState === "FLIPPING") {
-            flipTimerRef.current = setInterval(() => {
-                const randomP = Math.floor(Math.random() * (selectedBook.totalPages - 20)) + 14;
-                setDisplayedPage(randomP);
-                playNostalgiaSound("FLICK");
-            }, 42); // 42ms rapid flutter
-        } else {
-            if (flipTimerRef.current) clearInterval(flipTimerRef.current);
-        }
-        return () => {
-            if (flipTimerRef.current) clearInterval(flipTimerRef.current);
-        };
-    }, [bookState, selectedBook]);
-
-    // Handle Open Cover
-    const handleOpenCover = () => {
-        setBookState("OPEN");
-        setDisplayedPage(142);
-        setSamplePageIndex(0);
-        playNostalgiaSound("FLICK");
-    };
-
-    // Trigger Thumb Action (Flip or Stop)
-    const handleThumbToggle = () => {
-        if (matchEnded) return;
-
-        if (bookState === "OPEN") {
-            setBookState("FLIPPING");
-            setLastAction(null);
-        } else if (bookState === "FLIPPING") {
-            setBookState("OPEN");
-            const landedPage = displayedPage;
-            setSamplePageIndex(landedPage % selectedBook.samplePages.length);
-            evaluatePageOutcome(landedPage);
+        } catch {
+            // Audio ignore
         }
     };
 
-    const evaluatePageOutcome = (page: number) => {
-        const lastDigit = page % 10;
-        let runs: number | "OUT" = 0;
-        let label = "";
+    // Riffle Interval
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (isFlipping) {
+            interval = setInterval(() => {
+                const randomPage = Math.floor(Math.random() * (selectedBook.totalPages - 4)) + 4;
+                setCurrentPageNum(randomPage);
+                playSfx("rustle");
+            }, 45);
+        }
+        return () => clearInterval(interval);
+    }, [isFlipping, selectedBook.totalPages]);
+
+    // Flip Trigger
+    const startFlip = () => {
+        if (!isBookOpen) setIsBookOpen(true);
+        if (matchState === "matchOver" || matchState === "inningsBreak") return;
+        setIsFlipping(true);
+    };
+
+    // Stop and Evaluate Page Outcome
+    const stopFlipAndScore = () => {
+        if (!isFlipping) return;
+        setIsFlipping(false);
+
+        // Landed page
+        const landedPage = Math.floor(Math.random() * (selectedBook.totalPages - 4)) + 4;
+        setCurrentPageNum(landedPage);
+
+        // Rule of Book Cricket: Last digit determines outcome
+        const lastDigit = landedPage % 10;
+        let runScored: number | string = 0;
         let commentary = "";
-        let isBoundary = false;
+        let badge = "";
 
-        if (lastDigit === 0) {
-            runs = "OUT";
-            label = "CLEAN BOWLED! 💥";
-            commentary = `Page ${page} (0). Middle stump uprooted! Class gasps!`;
-            playNostalgiaSound("WICKET");
-        } else if (lastDigit === 8) {
-            runs = "OUT";
-            label = "CAUGHT AT SLIP! 🧤";
-            commentary = `Page ${page} (8). Thick outside edge snatched by first slip!`;
-            playNostalgiaSound("WICKET");
+        if (lastDigit === 0 || lastDigit === 8) {
+            runScored = "OUT!";
+            commentary = lastDigit === 0 ? "Clean Bowled! Middle stump uprooted! 💥" : "Caught at deep mid-wicket! 🧤";
+            badge = "bg-red-600 text-white";
+            playSfx("wicket");
         } else if (lastDigit === 6) {
-            runs = 6;
-            isBoundary = true;
-            label = "SIX! OUT OF THE SCHOOL GROUND! 🚀";
-            commentary = `Page ${page} (6). Lofted clean over the biology lab roof!`;
-            playNostalgiaSound("SIX");
+            runScored = 6;
+            commentary = "MASSIVE SIX! Cleared the school boundary wall! 🚀";
+            badge = "bg-purple-600 text-white";
+            playSfx("boundary");
         } else if (lastDigit === 4) {
-            runs = 4;
-            isBoundary = true;
-            label = "FOUR! CRACKING COVER DRIVE! 🔥";
-            commentary = `Page ${page} (4). Rocked back and smashed through extra cover!`;
-            playNostalgiaSound("FOUR");
+            runScored = 4;
+            commentary = "CRACKING FOUR! Pierced the cover gap! 🔥";
+            badge = "bg-amber-500 text-black";
+            playSfx("boundary");
         } else if (lastDigit === 2) {
-            runs = 2;
-            label = "Quick Double (2 Runs) ⚡";
-            commentary = `Page ${page} (2). Pushed into deep square leg, sprinting back for two.`;
-            playNostalgiaSound("SINGLE");
-        } else if (lastDigit === 9) {
-            runs = 0;
-            label = "Dot Ball (0 Runs) 🛡️";
-            commentary = `Page ${page} (9). Solid forward defensive right under the nose.`;
+            runScored = 2;
+            commentary = "Quick double! Great running between wickets ⚡";
+            badge = "bg-emerald-600 text-white";
+            playSfx("rustle");
         } else {
-            runs = 1;
-            label = "Single (1 Run) 🏃";
-            commentary = `Page ${page} (${lastDigit}). Tucked off the pads into the leg side.`;
-            playNostalgiaSound("SINGLE");
+            runScored = 1;
+            commentary = "Single taken, rotating the strike 🏃";
+            badge = "bg-blue-600 text-white";
+            playSfx("rustle");
         }
 
-        const newBalls = balls + 1;
-        setBalls(newBalls);
+        setLastOutcome({ page: landedPage, run: runScored, commentary, badge });
 
-        if (runs === "OUT") {
-            const newWickets = wickets + 1;
-            setWickets(newWickets);
-            setMatchEnded(true);
-            setLastAction({ page, runs: "OUT", commentary, label, isBoundary: false });
+        // Update Innings 1 or Innings 2
+        if (currentInnings === 1) {
+            const nextBalls = p1Balls + 1;
+            let nextRuns = p1Runs;
+            let nextWickets = p1Wickets;
 
-            setBallLogs(prev => [
-                {
-                    ballNum: newBalls,
-                    page,
-                    runs: "OUT",
-                    scoreAfter: score,
-                    desc: commentary
-                },
-                ...prev
-            ]);
-
-            if (score > highScore) {
-                setHighScore(score);
-                localStorage.setItem("kreo_official_book_cricket_record", score.toString());
+            if (runScored === "OUT!") {
+                nextWickets += 1;
+            } else {
+                nextRuns += Number(runScored);
             }
-        } else {
-            const newScore = score + (runs as number);
-            setScore(newScore);
-            setLastAction({ page, runs, commentary, label, isBoundary });
 
-            setBallLogs(prev => [
-                {
-                    ballNum: newBalls,
-                    page,
-                    runs,
-                    scoreAfter: newScore,
-                    desc: commentary
-                },
-                ...prev
-            ]);
+            setP1Balls(nextBalls);
+            setP1Runs(nextRuns);
+            setP1Wickets(nextWickets);
+            setP1History((prev) => [{ page: landedPage, run: runScored, commentary }, ...prev]);
 
-            if (newScore > highScore) {
-                setHighScore(newScore);
-                localStorage.setItem("kreo_official_book_cricket_record", newScore.toString());
+            if (nextWickets >= maxWickets) {
+                setMatchState("inningsBreak");
+                setCurrentInnings(2);
+                setIsBookOpen(false);
+            }
+        } else if (currentInnings === 2) {
+            const nextBalls = p2Balls + 1;
+            let nextRuns = p2Runs;
+            let nextWickets = p2Wickets;
+
+            if (runScored === "OUT!") {
+                nextWickets += 1;
+            } else {
+                nextRuns += Number(runScored);
+            }
+
+            setP2Balls(nextBalls);
+            setP2Runs(nextRuns);
+            setP2Wickets(nextWickets);
+            setP2History((prev) => [{ page: landedPage, run: runScored, commentary }, ...prev]);
+
+            // Check chase win or all out
+            const target = p1Runs + 1;
+            if (nextRuns >= target) {
+                setMatchState("matchOver");
+                setWinner(`${p2Name} Won by ${maxWickets - nextWickets} Wickets! 🏆`);
+            } else if (nextWickets >= maxWickets) {
+                setMatchState("matchOver");
+                if (nextRuns === p1Runs) {
+                    setWinner("Match Tied! Super Over needed! 🤝");
+                } else {
+                    setWinner(`${p1Name} Won by ${p1Runs - nextRuns} Runs! 🏆`);
+                }
             }
         }
     };
 
-    const handleResetMatch = () => {
-        setScore(0);
-        setWickets(0);
-        setBalls(0);
-        setMatchEnded(false);
-        setLastAction(null);
-        setBallLogs([]);
-        setBookState("OPEN");
-        setDisplayedPage(Math.floor(selectedBook.totalPages / 2));
+    const startInnings2 = () => {
+        setMatchState("innings2");
+        setIsBookOpen(true);
+        setLastOutcome(null);
     };
 
-    const activePageData = selectedBook.samplePages[samplePageIndex] || selectedBook.samplePages[0];
+    const resetFullMatch = () => {
+        setP1Runs(0);
+        setP1Wickets(0);
+        setP1Balls(0);
+        setP1History([]);
+        setP2Runs(0);
+        setP2Wickets(0);
+        setP2Balls(0);
+        setP2History([]);
+        setCurrentInnings(1);
+        setMatchState("innings1");
+        setWinner(null);
+        setIsBookOpen(false);
+        setIsFlipping(false);
+        setLastOutcome(null);
+    };
+
+    const samplePageData = selectedBook.samplePages[currentPageNum % selectedBook.samplePages.length];
+    const targetScore = p1Runs + 1;
+    const runsNeeded = targetScore - p2Runs;
 
     return (
-        <div className="min-h-screen bg-[#17130f] text-[#2d2217] flex flex-col justify-between p-3 sm:p-6 font-serif select-none relative overflow-x-hidden">
-            
-            {/* WOODEN SCHOOL DESK SURFACE */}
-            <div 
-                className="fixed inset-0 pointer-events-none opacity-45 z-0"
-                style={{
-                    backgroundImage: `radial-gradient(#382c23 1px, transparent 1px), linear-gradient(180deg, #130f0c 0%, #261c16 100%)`,
-                    backgroundSize: '24px 24px, 100% 100%'
-                }}
-            />
+        <main className="min-h-screen bg-[#1c1612] text-zinc-100 flex flex-col items-center justify-start p-3 sm:p-6 select-none relative overflow-x-hidden font-sans">
+            {/* Wooden Classroom Desk Surface */}
+            <div className="absolute inset-0 opacity-40 pointer-events-none bg-[radial-gradient(#4a2b13_1px,transparent_1px)] [background-size:16px_16px]" />
 
-            {/* CLASSROOM HEADER */}
-            <header className="relative z-10 w-full max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between pb-3 border-b border-[#3d2f25] gap-2 text-amber-100 font-mono text-xs">
-                <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
-                    <span className="font-bold tracking-widest uppercase">
-                        CLASS X-B • PERIOD 5 (MATHS LAB) // BOOK CRICKET 🏏
-                    </span>
+            {/* Top Match Bar */}
+            <header className="w-full max-w-5xl z-10 flex flex-wrap items-center justify-between gap-3 border-b border-amber-900/40 pb-4 mb-4">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-600/20 border border-amber-500/40 flex items-center justify-center text-xl shadow-inner">
+                        🏏
+                    </div>
+                    <div>
+                        <div className="flex items-center gap-2">
+                            <h1 className="text-lg sm:text-xl font-bold tracking-tight text-amber-100 font-serif">
+                                BOOK CRICKET 1v1 DUAL
+                            </h1>
+                            <span className="px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                                👥 Pass & Play Mode
+                            </span>
+                        </div>
+                        <p className="text-xs text-amber-300/70 font-mono">
+                            NCERT & CBSE 90s Recess Desk Match
+                        </p>
+                    </div>
                 </div>
-                <div className="flex items-center gap-4 text-xs">
-                    <span className="text-amber-300 flex items-center gap-1.5 font-bold">
-                        <Trophy size={14} className="text-amber-400" />
-                        RECESS RECORD: <strong className="text-white text-sm">{highScore} RUNS</strong>
-                    </span>
-                    <span className="text-amber-500/50">•</span>
-                    <span className="text-stone-400">CBSE BOARD 2004-05</span>
+
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1 bg-black/40 border border-amber-900/40 px-3 py-1.5 rounded-lg text-xs font-mono">
+                        <span className="text-zinc-400">Match Format:</span>
+                        <select
+                            disabled={p1Balls > 0}
+                            value={maxWickets}
+                            onChange={(e) => setMaxWickets(Number(e.target.value))}
+                            className="bg-transparent text-amber-300 font-bold outline-none cursor-pointer"
+                        >
+                            <option value={1} className="bg-zinc-900">1 Wicket (Quick Sudden Death)</option>
+                            <option value={3} className="bg-zinc-900">3 Wickets (Standard Recess)</option>
+                            <option value={5} className="bg-zinc-900">5 Wickets (Full Period Match)</option>
+                        </select>
+                    </div>
+                    <button
+                        onClick={resetFullMatch}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-950/40 border border-red-800/40 text-red-300 hover:bg-red-900/40 text-xs font-semibold transition"
+                    >
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        Reset Match
+                    </button>
                 </div>
             </header>
 
-            {/* DESK WORKSPACE: SCORECARD + OFFICIAL TEXTBOOK + SWITCHER */}
-            <main className="relative z-10 w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 my-auto py-4">
-                
-                {/* 1. TORN ROUGH PAPER SCORECARD (LEFT) */}
-                <div className="w-full lg:w-72 bg-[#fefdfa] text-[#1e1b18] p-5 rounded shadow-[0_20px_40px_rgba(0,0,0,0.8)] border border-[#e5dfd0] font-mono relative rotate-[-1deg]">
-                    {/* TAPE STRIP */}
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-28 h-6 bg-[#f7f2e4] border border-black/10 shadow-sm rotate-1 flex items-center justify-center text-[9px] text-stone-500 font-sans tracking-widest uppercase">
-                        CELLOTAPE 📌
+            {/* Innings Target Banner */}
+            {currentInnings === 2 && matchState === "innings2" && (
+                <div className="w-full max-w-5xl z-10 mb-4 bg-gradient-to-r from-amber-950/80 via-purple-950/80 to-amber-950/80 border border-amber-500/40 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm font-mono shadow-xl">
+                    <div className="flex items-center gap-2">
+                        <span className="animate-pulse text-amber-400 font-bold">🎯 TARGET: {targetScore} RUNS</span>
+                        <span className="text-zinc-400">|</span>
+                        <span>{p2Name} needs <strong className="text-purple-300 text-base">{runsNeeded > 0 ? runsNeeded : 0} runs</strong> to win!</span>
                     </div>
-
-                    <div className="text-center pb-2 border-b-2 border-dashed border-stone-300 mt-1 mb-3">
-                        <div className="text-[10px] font-bold tracking-widest text-stone-500 uppercase">
-                            OFFICIAL MATCH TALLY ✏️
-                        </div>
-                        <h2 className="text-3xl font-serif font-bold text-stone-900 mt-0.5">
-                            {score} <span className="text-xl text-red-600 font-mono">/ {wickets}</span>
-                        </h2>
-                        <div className="text-[10px] text-stone-600 uppercase font-mono">
-                            {balls} BALLS ({Math.floor(balls / 6)}.{balls % 6} OVERS) • SR: {balls > 0 ? ((score / balls) * 100).toFixed(0) : 0}
-                        </div>
+                    <div className="text-amber-200">
+                        Wickets in hand: <strong className="text-amber-400">{maxWickets - p2Wickets}</strong>
                     </div>
-
-                    {/* LIVE COMMENTARY / OUTCOME BOX */}
-                    <div className="min-h-[55px] flex items-center justify-center text-center p-2 rounded bg-amber-50 border border-amber-200/90 mb-3">
-                        {lastAction ? (
-                            <div>
-                                <span className={`font-bold font-serif text-sm ${
-                                    lastAction.runs === 'OUT' ? 'text-red-700' :
-                                    lastAction.isBoundary ? 'text-blue-800' : 'text-stone-800'
-                                }`}>
-                                    {lastAction.label}
-                                </span>
-                                <div className="text-[10px] text-stone-600 leading-tight mt-0.5 font-sans">
-                                    {lastAction.commentary}
-                                </div>
-                            </div>
-                        ) : (
-                            <span className="text-[11px] text-stone-400 italic font-serif">
-                                {bookState === 'CLOSED' ? 'Open textbook cover to bat' : 'Thumb on page corner ready to flip'}
-                            </span>
-                        )}
-                    </div>
-
-                    {/* BALL-BY-BALL LOG */}
-                    <div className="text-[10px] text-stone-500 font-bold uppercase flex justify-between border-b border-stone-200 pb-1 mb-1">
-                        <span>BALL (PAGE)</span>
-                        <span>RUNS (SCORE)</span>
-                    </div>
-                    <div className="max-h-36 overflow-y-auto space-y-1 text-xs pr-1 font-mono">
-                        {ballLogs.length === 0 ? (
-                            <div className="text-[10px] text-stone-400 text-center py-4 italic">
-                                Waiting for 1st delivery...
-                            </div>
-                        ) : (
-                            ballLogs.map((b, i) => (
-                                <div key={i} className="flex justify-between items-center py-0.5 border-b border-stone-100">
-                                    <span className="text-stone-500">
-                                        B{ballLogs.length - i} (p.{b.page})
-                                    </span>
-                                    <span className={`font-bold ${
-                                        b.runs === 'OUT' ? 'text-red-600 font-serif' :
-                                        b.runs === 6 ? 'text-amber-800' :
-                                        b.runs === 4 ? 'text-blue-800' : 'text-stone-800'
-                                    }`}>
-                                        {b.runs === 'OUT' ? 'OUT' : `+${b.runs}`} <span className="text-stone-400 font-normal">({b.scoreAfter})</span>
-                                    </span>
-                                </div>
-                            ))
-                        )}
-                    </div>
-
-                    {matchEnded && (
-                        <button
-                            onClick={handleResetMatch}
-                            className="w-full mt-4 py-2.5 bg-stone-900 text-amber-300 hover:bg-amber-600 hover:text-white transition-colors text-xs uppercase font-bold tracking-widest rounded shadow cursor-pointer flex items-center justify-center gap-1.5"
-                        >
-                            <RefreshCw size={13} /> Bat Next Innings
-                        </button>
-                    )}
                 </div>
+            )}
 
-                {/* 2. THE OFFICIAL NCERT TEXTBOOK + KID'S FLICKING HAND (CENTER) */}
-                <div className="flex flex-col items-center">
-                    
-                    {/* CASE A: OFFICIAL CLOSED NCERT TEXTBOOK COVER */}
-                    {bookState === "CLOSED" && (
-                        <motion.div
-                            initial={{ scale: 0.95 }}
-                            animate={{ scale: 1 }}
-                            whileHover={{ scale: 1.02 }}
-                            onClick={handleOpenCover}
-                            className={`w-72 sm:w-[380px] h-96 sm:h-[500px] bg-gradient-to-br ${selectedBook.coverColor} rounded-r-xl rounded-l-sm border-4 ${selectedBook.accentBorder} shadow-[25px_30px_60px_rgba(0,0,0,0.9)] p-6 sm:p-8 flex flex-col justify-between text-white cursor-pointer relative group transition-all`}
-                        >
-                            {/* SPINE BINDING CREASE */}
-                            <div className="absolute top-0 bottom-0 left-0 w-6 bg-gradient-to-r from-black/50 via-transparent to-black/20 border-r border-black/40 rounded-l-sm" />
+            {/* Main Desk Stage */}
+            <div className="w-full max-w-5xl z-10 grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+                
+                {/* LEFT SCORECARD: Torn School Paper */}
+                <div className="lg:col-span-4 bg-[#fbf5e6] text-[#241f19] rounded-xl p-4 sm:p-5 shadow-2xl border border-amber-900/40 relative font-serif transform -rotate-1 transition hover:rotate-0">
+                    {/* Scotch tape on top */}
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-6 bg-amber-200/40 backdrop-blur-sm border border-amber-300/30 -rotate-2 rounded shadow-sm pointer-events-none" />
 
-                            {/* TOP EMBLEMS: CBSE SEAL & CODE */}
-                            <div className="flex items-center justify-between border-b border-white/20 pb-3">
-                                <div className="text-[10px] font-mono tracking-widest uppercase opacity-90">
-                                    NCERT CODE: {selectedBook.code}
-                                </div>
-                                <div className="text-[10px] font-mono uppercase bg-black/40 px-2 py-0.5 rounded border border-white/20 text-amber-300">
-                                    CBSE CURRICULUM
-                                </div>
+                    <div className="border-b-2 border-dashed border-[#d5c3aa] pb-3 mb-3">
+                        <div className="flex items-center justify-between">
+                            <span className="text-xs font-mono tracking-widest text-[#8a684b] uppercase font-bold">
+                                CLASSROOM SCORECARD
+                            </span>
+                            <span className="text-[10px] font-mono text-[#a58467]">
+                                Period 4 • Desk #7
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Innings 1 Tab */}
+                    <div className={`p-3 rounded-lg mb-3 border ${currentInnings === 1 ? 'bg-amber-100/80 border-amber-600/60 shadow-sm' : 'bg-transparent border-stone-300 opacity-85'}`}>
+                        <div className="flex items-center justify-between mb-1">
+                            <div className="flex items-center gap-1.5 font-bold text-sm text-[#3b2314]">
+                                <User className="w-3.5 h-3.5 text-amber-700" />
+                                <span>{p1Name} (1st Innings)</span>
                             </div>
-
-                            {/* CENTER COVER ARTWORK */}
-                            <div className="text-center my-auto">
-                                <div className="text-5xl sm:text-6xl mb-2 drop-shadow-md">
-                                    {selectedBook.symbolEmoji}
-                                </div>
-                                <div className="text-xs font-serif tracking-widest text-amber-200/90 uppercase">
-                                    {selectedBook.hindiTitle}
-                                </div>
-                                <h1 className="text-3xl sm:text-4xl font-serif font-extrabold tracking-wider text-white drop-shadow-lg mt-1">
-                                    {selectedBook.title}
-                                </h1>
-                                <p className="text-xs font-serif italic text-white/80 mt-1">
-                                    {selectedBook.subTitle}
-                                </p>
+                            {currentInnings === 1 && <span className="px-1.5 py-0.5 rounded bg-amber-600 text-white text-[9px] font-mono font-bold">BATTING</span>}
+                        </div>
+                        <div className="flex items-baseline justify-between font-mono">
+                            <div className="text-2xl font-black text-[#6d2518]">
+                                {p1Runs} <span className="text-sm font-normal text-stone-600">/ {p1Wickets}</span>
                             </div>
-
-                            {/* BOTTOM OFFICIAL PUBLISHER BANNER */}
-                            <div className="text-center border-t border-white/20 pt-3">
-                                <div className="text-[9px] font-mono text-white/70 uppercase tracking-widest leading-tight">
-                                    राष्ट्रीय शैक्षिक अनुसंधान और प्रशिक्षण परिषद्
-                                    <br />
-                                    NATIONAL COUNCIL OF EDUCATIONAL RESEARCH AND TRAINING
-                                </div>
-                                <div className="mt-3 py-2 bg-amber-400 text-stone-950 font-mono font-bold text-xs uppercase tracking-widest rounded shadow group-hover:bg-amber-300 transition-colors animate-pulse">
-                                    📖 Click to Open & Play
-                                </div>
+                            <div className="text-xs text-stone-600">
+                                Balls: <span className="font-bold text-black">{p1Balls}</span> | SR: <span className="font-bold text-black">{p1Balls > 0 ? ((p1Runs / p1Balls) * 100).toFixed(0) : 0}</span>
                             </div>
-                        </motion.div>
-                    )}
+                        </div>
+                    </div>
 
-                    {/* CASE B: OPEN NCERT TEXTBOOK WITH KID'S FLICKING HAND ANIMATION */}
-                    {bookState !== "CLOSED" && (
-                        <div className="relative">
-                            
-                            {/* THE SKEUOMORPHIC OPEN BOOK SPREAD */}
-                            <div className="w-80 sm:w-[600px] h-[360px] sm:h-[460px] bg-[#fdfaf2] text-[#221c16] rounded-sm shadow-[0_30px_70px_rgba(0,0,0,0.9)] border border-[#d3ccba] flex relative overflow-hidden">
-                                
-                                {/* CENTER SEAM & DEEP SHADOW */}
-                                <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 bg-gradient-to-r from-black/25 via-black/45 to-black/25 pointer-events-none z-20 shadow-inner" />
-
-                                {/* LEFT PAGE (CHAPTER HEADING & THEOREMS) */}
-                                <div className="w-1/2 p-4 sm:p-6 pr-6 sm:pr-8 flex flex-col justify-between border-r border-[#e5decb] relative">
-                                    <div>
-                                        <div className="flex justify-between items-center border-b border-stone-300 pb-1 mb-2 text-[9px] font-mono uppercase text-stone-500">
-                                            <span>{activePageData.chapterNum}</span>
-                                            <span className="font-serif">{activePageData.chapterHindi}</span>
-                                        </div>
-                                        <h3 className="font-serif font-bold text-xs sm:text-sm text-stone-900 uppercase leading-snug mb-2">
-                                            {activePageData.chapterEnglish}
-                                        </h3>
-                                        <div className="text-[10px] font-serif font-semibold text-stone-800 mb-2">
-                                            {activePageData.sectionTitle}
-                                        </div>
-                                        <div className="space-y-1.5 text-[9px] sm:text-[11px] text-stone-700 leading-relaxed font-serif">
-                                            {activePageData.contentParagraphs.slice(0, 3).map((p, i) => (
-                                                <p key={i}>{p}</p>
-                                            ))}
-                                        </div>
-
-                                        {activePageData.formulaBox && (
-                                            <div className="mt-2.5 p-1.5 rounded bg-amber-50/80 border border-amber-300/80 text-[8px] sm:text-[10px] font-mono text-stone-800">
-                                                {activePageData.formulaBox}
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* LEFT BOTTOM PAGE NUMBER */}
-                                    <div className="flex justify-between items-end text-[10px] font-mono text-stone-500 border-t border-stone-300 pt-1 mt-2">
-                                        <span>{Math.max(1, displayedPage - 1)}</span>
-                                        <span className="text-[8px] italic text-stone-400">NCERT Class X • {selectedBook.title}</span>
-                                    </div>
-                                </div>
-
-                                {/* RIGHT PAGE (ACTION SCORING SPREAD) */}
-                                <div className="w-1/2 p-4 sm:p-6 pl-6 sm:pl-8 flex flex-col justify-between relative bg-gradient-to-l from-[#faf5e8] to-[#fdfaf2]">
-                                    <div>
-                                        <div className="text-[9px] font-mono uppercase tracking-wider text-stone-500 text-right border-b border-stone-300 pb-1 mb-2">
-                                            EXERCISES & EVALUATION
-                                        </div>
-
-                                        {/* PENCIL MARGIN DOODLE */}
-                                        <div className="p-2 rounded bg-amber-100/60 border border-amber-300/60 text-[9px] sm:text-xs text-stone-800 font-sans italic my-2">
-                                            ✏️ {activePageData.roughDoodle}
-                                        </div>
-
-                                        {/* SKEUOMORPHIC ACTIVE PAGE FLUTTERING STATE */}
-                                        <div className="my-auto text-center py-4">
-                                            {bookState === "FLIPPING" ? (
-                                                <div className="space-y-1">
-                                                    <div className="text-3xl sm:text-5xl font-mono font-bold tracking-widest text-amber-800 animate-pulse">
-                                                        p. {displayedPage}
-                                                    </div>
-                                                    <div className="text-[10px] font-mono text-stone-500 uppercase tracking-widest animate-bounce">
-                                                        Thumb Riffle in Progress...
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <div className="space-y-1">
-                                                    <div className="text-xs font-mono uppercase tracking-widest text-stone-400">
-                                                        Landed On Page
-                                                    </div>
-                                                    <div className="text-4xl sm:text-6xl font-mono font-bold text-stone-900 tracking-wider">
-                                                        {displayedPage}
-                                                    </div>
-                                                    <div className="text-xs font-mono text-stone-900 font-bold uppercase mt-1">
-                                                        Scoring Digit: <span className="text-xl text-red-700 bg-amber-200/90 px-2 py-0.5 rounded border border-red-700/30">{displayedPage % 10}</span>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* RIGHT BOTTOM PAGE NUMBER (OFFICIAL NCERT FONT POSITION) */}
-                                    <div className="flex justify-between items-end text-[11px] font-mono font-bold text-stone-800 border-t border-stone-300 pt-1 mt-2">
-                                        <span className="text-[8px] text-stone-400 font-normal">Classroom Recess</span>
-                                        <span className="text-sm text-stone-900 bg-amber-100 px-2 py-0.5 rounded border border-stone-300">
-                                            p. {displayedPage}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* 3. REAL KID'S HAND & THUMB OVERLAY ON PAGE CORNER */}
-                                <motion.div 
-                                    animate={bookState === "FLIPPING" ? {
-                                        rotate: [0, -8, 4, -6, 0],
-                                        y: [0, -4, 2, -3, 0],
-                                        transition: { repeat: Infinity, duration: 0.15 }
-                                    } : { rotate: 0, y: 0 }}
-                                    className="absolute bottom-1 right-2 pointer-events-none z-30 flex items-end drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
-                                >
-                                    <div className="relative">
-                                        {/* ILLUSTRATED STUDENT HAND WITH THUMB PRESSING CORNER */}
-                                        <div className="w-16 h-20 sm:w-20 sm:h-24 bg-[#e8be96] rounded-t-2xl border-2 border-[#b88c66] shadow-xl relative -rotate-12 flex flex-col justify-between p-1">
-                                            {/* KNUCKLE CREASES */}
-                                            <div className="w-6 h-0.5 bg-[#b88c66]/40 mx-auto rounded mt-3" />
-                                            <div className="w-8 h-0.5 bg-[#b88c66]/40 mx-auto rounded" />
-                                            {/* THUMBNAIL WITH INK STAIN */}
-                                            <div className="w-5 h-6 bg-[#f3d3b6] rounded-t-lg border border-[#b88c66] mx-auto mb-1 relative overflow-hidden">
-                                                {/* BLUE REYNOLDS INK STAIN */}
-                                                <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-blue-700/80" />
-                                            </div>
-                                        </div>
-                                        <span className="absolute -top-4 -left-1 text-[8px] font-mono font-bold bg-black/80 text-amber-200 px-1.5 py-0.5 rounded shadow whitespace-nowrap">
-                                            {bookState === "FLIPPING" ? "Flicking..." : "Thumb Grip"}
-                                        </span>
-                                    </div>
-                                </motion.div>
+                    {/* Innings 2 Tab */}
+                    <div className={`p-3 rounded-lg border ${currentInnings === 2 ? 'bg-purple-100/90 border-purple-600/60 shadow-sm' : 'bg-transparent border-stone-300 opacity-85'}`}>
+                        <div className="flex items-center justify-between mb-1">
+                            <div className="flex items-center gap-1.5 font-bold text-sm text-[#271033]">
+                                <Users className="w-3.5 h-3.5 text-purple-700" />
+                                <span>{p2Name} (2nd Innings)</span>
                             </div>
+                            {currentInnings === 2 && matchState === "innings2" && <span className="px-1.5 py-0.5 rounded bg-purple-600 text-white text-[9px] font-mono font-bold">CHASING</span>}
+                        </div>
+                        <div className="flex items-baseline justify-between font-mono">
+                            <div className="text-2xl font-black text-[#431407]">
+                                {p2Runs} <span className="text-sm font-normal text-stone-600">/ {p2Wickets}</span>
+                            </div>
+                            <div className="text-xs text-stone-600">
+                                Balls: <span className="font-bold text-black">{p2Balls}</span> | Target: <span className="font-bold text-purple-900">{p1Balls > 0 ? targetScore : "-"}</span>
+                            </div>
+                        </div>
+                    </div>
 
-                            {/* CONTROLS */}
-                            <div className="mt-6 flex flex-col items-center gap-3">
-                                <button
-                                    onClick={handleThumbToggle}
-                                    disabled={matchEnded}
-                                    className={`w-72 sm:w-96 py-4 uppercase font-mono tracking-widest text-base sm:text-xl font-bold transition-all shadow-[0_15px_30px_rgba(0,0,0,0.7)] rounded-lg cursor-pointer ${
-                                        matchEnded
-                                            ? "bg-stone-800 text-stone-500 cursor-not-allowed border border-stone-700"
-                                            : bookState === "FLIPPING"
-                                            ? "bg-red-600 hover:bg-red-500 text-white animate-pulse shadow-red-600/50 border-2 border-red-400"
-                                            : "bg-amber-400 hover:bg-amber-300 text-stone-950 border-2 border-amber-300"
+                    {/* Ball-by-ball ledger */}
+                    <div className="mt-4 pt-3 border-t border-dashed border-[#d5c3aa]">
+                        <span className="text-[11px] font-mono text-[#8a684b] uppercase font-bold block mb-2">
+                            RECENT BALLS (BALL-BY-BALL)
+                        </span>
+                        <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
+                            {(currentInnings === 1 ? p1History : p2History).slice(0, 14).map((h, idx) => (
+                                <span
+                                    key={idx}
+                                    className={`px-2 py-0.5 rounded text-xs font-mono font-bold shadow-sm ${
+                                        h.run === 6 ? 'bg-purple-600 text-white' :
+                                        h.run === 4 ? 'bg-amber-600 text-white' :
+                                        h.run === "OUT!" ? 'bg-red-600 text-white' :
+                                        'bg-[#ece3cf] text-[#413327]'
                                     }`}
                                 >
-                                    {bookState === "FLIPPING" ? "🛑 SLAM THUMB DOWN! (STOP)" : "📖 FLIP TEXTBOOK (CLICK TO RIFFLE)"}
-                                </button>
-                                <p className="text-[11px] font-mono text-amber-200/70 uppercase">
-                                    Last digit of page: 2, 4, 6 = Runs • 1, 3, 5, 7 = Single • 0 or 8 = OUT
-                                </p>
-                            </div>
+                                    p.{h.page} → {h.run}
+                                </span>
+                            ))}
+                            {(currentInnings === 1 ? p1History : p2History).length === 0 && (
+                                <span className="text-xs italic text-stone-400 font-sans">No balls bowled yet. Click Flip to start!</span>
+                            )}
                         </div>
-                    )}
+                    </div>
                 </div>
 
-                {/* 3. OFFICIAL NCERT TEXTBOOK PICKER (RIGHT) */}
-                <div className="w-full lg:w-64 flex flex-col gap-3 font-mono text-xs text-amber-100">
-                    <span className="text-[10px] text-amber-400 font-bold uppercase tracking-widest flex items-center gap-1.5">
-                        <BookOpen size={13} />
-                        [CBSE OFFICIAL PRESCRIBED TEXTBOOKS]
-                    </span>
-                    {OFFICIAL_BOOKS.map((b) => (
-                        <button
-                            key={b.id}
-                            onClick={() => {
-                                setSelectedBook(b);
-                                setBookState("CLOSED");
-                                setMatchEnded(false);
-                                setScore(0);
-                                setBalls(0);
-                                setWickets(0);
-                                setBallLogs([]);
-                                setLastAction(null);
-                            }}
-                            className={`p-3.5 rounded-lg border text-left transition-all cursor-pointer ${
-                                selectedBook.id === b.id
-                                    ? "bg-amber-500/25 border-amber-400 text-white font-bold shadow-lg ring-1 ring-amber-400"
-                                    : "bg-black/40 border-[#3d2f25] text-stone-400 hover:border-stone-400 hover:text-stone-200"
-                            }`}
-                        >
-                            <div className="flex justify-between items-center text-[10px] text-amber-400 uppercase font-mono">
-                                <span>CODE {b.code}</span>
-                                <span>{b.totalPages} PAGES</span>
-                            </div>
-                            <div className="font-serif text-base text-stone-100 font-bold mt-1 flex items-center gap-2">
-                                <span>{b.symbolEmoji}</span>
-                                <span>{b.title}</span>
-                            </div>
-                            <div className="text-[10px] text-stone-400 italic mt-0.5">
-                                {b.hindiTitle} • {b.subTitle}
-                            </div>
-                        </button>
-                    ))}
-                </div>
-            </main>
+                {/* CENTER: Skeuomorphic Textbook & Desk Area */}
+                <div className="lg:col-span-8 flex flex-col items-center">
+                    
+                    {/* MATCH BREAK / VICTORY OVERLAY */}
+                    <AnimatePresence>
+                        {matchState === "inningsBreak" && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="w-full bg-gradient-to-br from-[#2a1b11] to-[#1a0f08] border-2 border-amber-500 rounded-2xl p-6 sm:p-8 text-center shadow-2xl mb-6 z-20"
+                            >
+                                <div className="text-4xl mb-2">🔔</div>
+                                <h2 className="text-2xl font-black text-amber-200 font-serif mb-1">
+                                    INNINGS BREAK!
+                                </h2>
+                                <p className="text-amber-400 font-mono text-sm mb-4">
+                                    {p1Name} scored <strong className="text-xl text-white">{p1Runs}/{p1Wickets}</strong>
+                                </p>
+                                <div className="bg-black/50 border border-amber-900/60 rounded-xl p-4 max-w-md mx-auto mb-6">
+                                    <p className="text-xs text-zinc-300 font-mono mb-1">PASS THE TEXTBOOK TO</p>
+                                    <p className="text-lg font-bold text-purple-300 font-serif">{p2Name}</p>
+                                    <p className="text-xs text-amber-400 mt-2 font-mono">
+                                        TARGET TO WIN: <strong>{targetScore} RUNS</strong>
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={startInnings2}
+                                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-amber-600 text-white font-bold text-sm tracking-wide hover:from-purple-500 hover:to-amber-500 shadow-xl flex items-center gap-2 mx-auto transition transform hover:scale-105"
+                                >
+                                    <span>START 2ND INNINGS (CHASE TARGET)</span>
+                                    <ArrowRight className="w-4 h-4" />
+                                </button>
+                            </motion.div>
+                        )}
 
-            {/* CLASSROOM FOOTER RULES */}
-            <footer className="relative z-10 text-[11px] font-mono text-amber-200/50 uppercase tracking-widest pb-2 text-center">
-                Strict School Rules: No folding page corners • 0 or 8 is immediate dismissal • Class X Board syllabus.
-            </footer>
-        </div>
+                        {matchState === "matchOver" && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="w-full bg-gradient-to-br from-[#2e190a] to-[#120904] border-2 border-amber-400 rounded-2xl p-6 sm:p-8 text-center shadow-2xl mb-6 z-20"
+                            >
+                                <div className="text-5xl mb-3">🏆</div>
+                                <h2 className="text-2xl sm:text-3xl font-black text-amber-200 font-serif mb-2">
+                                    {winner}
+                                </h2>
+                                <p className="text-xs sm:text-sm text-zinc-300 font-mono mb-6">
+                                    Final Score: {p1Name} ({p1Runs}/{p1Wickets}) vs {p2Name} ({p2Runs}/{p2Wickets})
+                                </p>
+                                <button
+                                    onClick={resetFullMatch}
+                                    className="px-6 py-3 rounded-xl bg-amber-600 text-black font-black text-sm tracking-wider hover:bg-amber-500 shadow-xl flex items-center gap-2 mx-auto transition transform hover:scale-105"
+                                >
+                                    <RefreshCw className="w-4 h-4" />
+                                    <span>PLAY REMATCH (NEW INNINGS)</span>
+                                </button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* THE PHYSICAL TEXTBOOK */}
+                    <div className="w-full relative flex justify-center py-4">
+                        {!isBookOpen ? (
+                            /* CLOSED TEXTBOOK COVER */
+                            <motion.div
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => setIsBookOpen(true)}
+                                className={`w-full max-w-lg aspect-[3/4] rounded-r-2xl rounded-l-md bg-gradient-to-r ${selectedBook.coverColor} p-6 sm:p-8 shadow-2xl border-2 ${selectedBook.accentBorder} flex flex-col justify-between cursor-pointer relative overflow-hidden group transform hover:-rotate-1 transition-all`}
+                            >
+                                {/* Spine crease on left */}
+                                <div className="absolute left-0 top-0 bottom-0 w-7 bg-gradient-to-r from-black/60 via-black/20 to-transparent border-r border-black/30" />
+                                <div className="absolute right-0 top-0 bottom-0 w-3 bg-gradient-to-l from-black/40 to-transparent" />
+
+                                {/* Top Header */}
+                                <div className="pl-6">
+                                    <div className="flex items-center justify-between text-amber-400/90 text-xs font-mono font-bold tracking-widest uppercase mb-1">
+                                        <span>CODE {selectedBook.code}</span>
+                                        <span>{selectedBook.symbolEmoji} CLASS X</span>
+                                    </div>
+                                    <p className="text-[11px] text-zinc-300 tracking-wide font-serif">
+                                        {selectedBook.subject}
+                                    </p>
+                                </div>
+
+                                {/* Main Title */}
+                                <div className="pl-6 text-center my-auto">
+                                    <span className="text-xl sm:text-2xl text-amber-300/90 font-serif font-bold block mb-1">
+                                        {selectedBook.hindiTitle}
+                                    </span>
+                                    <h2 className="text-3xl sm:text-5xl font-black text-white font-serif tracking-tight drop-shadow-md">
+                                        {selectedBook.title}
+                                    </h2>
+                                    <p className="text-xs sm:text-sm text-zinc-300 italic mt-2 font-serif">
+                                        {selectedBook.subTitle}
+                                    </p>
+                                </div>
+
+                                {/* Bottom Publisher Seal */}
+                                <div className="pl-6 flex items-center justify-between text-[10px] text-zinc-400 font-mono pt-4 border-t border-white/10">
+                                    <span>NCERT / राष्ट्रीय शैक्षिक अनुसंधान</span>
+                                    <span className="text-amber-400 group-hover:underline flex items-center gap-1 font-bold">
+                                        CLICK TO OPEN BOOK 📖
+                                    </span>
+                                </div>
+                            </motion.div>
+                        ) : (
+                            /* OPEN TEXTBOOK SPREAD WITH SKEUOMORPHIC HAND FLIPPER */
+                            <div className="w-full max-w-2xl bg-[#faf5e8] text-[#1c1917] rounded-xl shadow-2xl border-4 border-[#3d2616] p-4 sm:p-8 relative font-serif min-h-[380px] flex flex-col justify-between">
+                                {/* Spine fold shadow in center */}
+                                <div className="absolute left-1/2 top-0 bottom-0 w-8 -translate-x-1/2 bg-gradient-to-r from-black/15 via-black/5 to-black/15 pointer-events-none" />
+
+                                {/* Chapter Header */}
+                                <div className="border-b border-[#d8c8b4] pb-3 mb-3">
+                                    <div className="flex items-center justify-between text-xs font-mono text-[#8a684b]">
+                                        <span>{samplePageData.chapterNum}</span>
+                                        <span>{samplePageData.chapterHindi} / {samplePageData.chapterEnglish}</span>
+                                    </div>
+                                    <h3 className="text-base sm:text-lg font-bold text-[#45220a] mt-1">
+                                        {samplePageData.sectionTitle}
+                                    </h3>
+                                </div>
+
+                                {/* Authentic NCERT Exercises & Math Text */}
+                                <div className="space-y-2 text-xs sm:text-sm text-[#2c241c] leading-relaxed my-auto pr-8">
+                                    {samplePageData.contentParagraphs.map((para, i) => (
+                                        <p key={i}>{para}</p>
+                                    ))}
+                                    <div className="bg-[#ede4ce] border border-[#cfbe9f] p-2.5 rounded text-xs font-mono text-[#3a2f26] my-2">
+                                        <strong>Key Theorem:</strong> {samplePageData.formulaBox}
+                                    </div>
+                                </div>
+
+                                {/* Margin Scribble */}
+                                <div className="mt-3 pt-2 border-t border-dashed border-[#d8c8b4] flex items-center justify-between text-[11px] font-mono text-[#825c38]">
+                                    <span className="italic">✏️ Margin: {samplePageData.roughDoodle}</span>
+                                </div>
+
+                                {/* BOTTOM RIGHT: The Authentic Page Number + Animated Kid Thumb */}
+                                <div className="absolute bottom-4 right-6 flex items-center gap-3">
+                                    <div className="text-right">
+                                        <span className="text-[10px] font-mono uppercase text-stone-500 block">PAGE</span>
+                                        <span className="text-2xl sm:text-3xl font-black font-serif text-[#7c2d12] tracking-tighter">
+                                            {currentPageNum}
+                                        </span>
+                                    </div>
+
+                                    {/* Kid's Animated Hand Thumb */}
+                                    <motion.div
+                                        animate={isFlipping ? { x: [0, -3, 2, -2, 0], rotate: [-1, 2, -2, 1] } : {}}
+                                        transition={{ repeat: Infinity, duration: 0.08 }}
+                                        className="w-12 h-14 bg-[#d4a373] rounded-t-full border-2 border-[#8a5a36] shadow-lg relative flex items-center justify-center cursor-pointer transform -rotate-12"
+                                    >
+                                        {/* Blue Ink Reynolds Stain on Thumb */}
+                                        <div className="w-3.5 h-3.5 bg-blue-700/80 rounded-full blur-[1px] absolute top-2 right-2" />
+                                        <span className="text-[9px] font-bold text-[#4a2e1b] font-mono transform rotate-12 mt-4">
+                                            THUMB
+                                        </span>
+                                    </motion.div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* INTERACTIVE FLIP CONTROLS */}
+                    <div className="w-full max-w-lg mt-4 flex flex-col gap-3 items-center">
+                        {matchState !== "inningsBreak" && matchState !== "matchOver" && (
+                            <div className="w-full flex gap-3">
+                                {!isFlipping ? (
+                                    <button
+                                        onClick={startFlip}
+                                        className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-400 text-black font-black text-sm sm:text-base tracking-wider shadow-xl transition transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
+                                    >
+                                        <Sparkles className="w-5 h-5" />
+                                        <span>FLIP PAGES WITH THUMB (HOLD & RUN)</span>
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={stopFlipAndScore}
+                                        className="w-full py-4 rounded-xl bg-gradient-to-r from-red-600 via-red-500 to-red-600 hover:from-red-500 hover:to-red-400 text-white font-black text-base sm:text-lg tracking-wider shadow-2xl animate-pulse transition transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
+                                    >
+                                        <span>🛑 SLAM THUMB DOWN! (STOP PAGE)</span>
+                                    </button>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Recent Ball Outcome Callout */}
+                        {lastOutcome && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="w-full bg-black/60 border border-amber-900/60 rounded-xl p-3 flex items-center justify-between gap-3 text-xs font-mono"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span className={`px-2 py-0.5 rounded font-black text-xs ${lastOutcome.badge}`}>
+                                        {lastOutcome.run}
+                                    </span>
+                                    <span className="text-zinc-300">{lastOutcome.commentary}</span>
+                                </div>
+                                <span className="text-stone-400">Page {lastOutcome.page}</span>
+                            </motion.div>
+                        )}
+                    </div>
+
+                    {/* TEXTBOOK SELECTOR TABS */}
+                    <div className="w-full max-w-lg mt-6 pt-4 border-t border-amber-900/40 flex items-center justify-between gap-2 overflow-x-auto">
+                        <span className="text-xs font-mono text-zinc-400 uppercase">Change Book:</span>
+                        <div className="flex gap-2">
+                            {TEXTBOOKS.map((book) => (
+                                <button
+                                    key={book.id}
+                                    onClick={() => {
+                                        setSelectedBook(book);
+                                        setIsBookOpen(false);
+                                    }}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition ${
+                                        selectedBook.id === book.id
+                                            ? 'bg-amber-600 text-black shadow-md'
+                                            : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
+                                    }`}
+                                >
+                                    {book.symbolEmoji} {book.title} ({book.code})
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
     );
 }
