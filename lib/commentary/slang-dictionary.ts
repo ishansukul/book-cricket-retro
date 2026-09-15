@@ -1,0 +1,1 @@
+export const CRICKET_SLANG = ['Bhaagne de!', 'Boundary hai!', 'Bowled out!', 'Ek aur run!'];
