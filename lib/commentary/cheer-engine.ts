@@ -1,0 +1,1 @@
+export function getCheer(rrr: number) { return rrr > 12 ? 'Pappu bol raha hai sixer maar!' : 'Araam se khel!'; }
