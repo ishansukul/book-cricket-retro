@@ -1,0 +1,1 @@
+export function WoodenRuler() { return <div className='h-4 bg-amber-200 border-t border-amber-900/30' />; }
