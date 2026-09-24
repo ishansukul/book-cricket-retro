@@ -1,0 +1,16 @@
+{
+  "name": "Book Cricket Retro - 90s Recess Classroom Cricket",
+  "short_name": "BookCricket",
+  "description": "Pure Indian school recess nostalgia. Skeuomorphic Book Cricket game with NCERT textbooks, thumb physics, and teacher stealth AI.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1c1917",
+  "theme_color": "#b45309",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
