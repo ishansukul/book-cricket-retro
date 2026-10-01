@@ -1,0 +1,5 @@
+.pencil-smudge {
+  filter: drop-shadow(1px 1px 1px rgba(60, 60, 60, 0.45));
+  font-family: 'Indie Flower', cursive, sans-serif;
+  letter-spacing: 0.5px;
+}
